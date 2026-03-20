@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PRR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export PRR_DIR
+
+COMMAND="${1:-}"
+
+if [[ -z "$COMMAND" ]]; then
+  COMMAND="help"
+fi
+
+shift 2>/dev/null || true
+
+case "$COMMAND" in
+  init)     bash "$PRR_DIR/commands/init.sh" "$@" ;;
+  reviewer) bash "$PRR_DIR/commands/reviewer.sh" "$@" ;;
+  repo)     bash "$PRR_DIR/commands/repo.sh" "$@" ;;
+  status)   bash "$PRR_DIR/commands/status.sh" "$@" ;;
+  help|--help|-h)
+    echo "사용법: prr <커맨드> [인수]"
+    echo ""
+    echo "커맨드:"
+    echo "  init <owner/repo>                리포 등록 (설정 디렉터리 생성)"
+    echo "  reviewer add <owner/repo>        리뷰어 추가 (인터랙티브)"
+    echo "  reviewer list <owner/repo>       리뷰어 목록"
+    echo "  repo list                        등록된 리포 목록"
+    echo "  status                           환경 상태 확인"
+    echo ""
+    echo "Claude Code 스킬:"
+    echo "  /prr-scan <local-path> <owner/repo>   env.json 자동 생성"
+    echo "  /prr-review <owner/repo> <pr-number>  PR 리뷰 실행"
+    echo ""
+    echo "예시:"
+    echo "  prr init owner/my-repo"
+    echo "  prr reviewer add owner/my-repo"
+    ;;
+  *)
+    echo "오류: 알 수 없는 커맨드 '$COMMAND'" >&2
+    echo "도움말: prr help" >&2
+    exit 1
+    ;;
+esac

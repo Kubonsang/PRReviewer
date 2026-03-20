@@ -1,0 +1,9 @@
+.env
+.env.*
+*.token
+configs/repos/*/
+/tmp/prr_*
+*.log
+.claude
+.DS_Store
+
