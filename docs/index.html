@@ -555,6 +555,7 @@
         <a class="nav-link" href="#cli">커맨드 목록</a>
         <a class="nav-link" href="#init">prr init</a>
         <a class="nav-link" href="#reviewer">prr reviewer</a>
+        <a class="nav-link" href="#skill-cmd">prr skill</a>
       </div>
       <div class="nav-section">
         <div class="nav-label">Claude Code 스킬</div>
@@ -679,12 +680,10 @@
           <button class="cli-copy" onclick="copyBlock(this)">copy</button>
         </div>
         <div class="cli-content">
-          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">cp -r ~/PRR/skills/prr-review       ~/.claude/skills/</span></div>
-          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">cp -r ~/PRR/skills/prr-scan         ~/.claude/skills/</span></div>
-          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">cp -r ~/PRR/skills/prr-add-reviewer ~/.claude/skills/</span></div>
+          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr skill sync</span></div>
         </div>
       </div>
-      <p style="font-size:12.5px;margin-top:-4px">스킬 파일(<code>~/.claude/skills/prr-*/SKILL.md</code>) 안의 <code>PRR_DIR</code> 경로를 실제 클론 경로로 수정해야 한다. <code>which prr | xargs dirname</code> 으로 확인.</p>
+      <p style="font-size:12.5px;margin-top:-4px"><code>prr skill sync</code>는 <code>PRR_DIR/skills/</code> 의 모든 스킬을 <code>~/.claude/skills/</code> 에 복사한다. git pull 이후나 스킬을 초기화할 때도 동일하게 사용한다.</p>
 
       <h3>전체 워크플로우</h3>
       <div class="steps">
@@ -739,6 +738,8 @@
           <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">reviewer</span> add &lt;owner/repo&gt;</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 리뷰어 추가</span></div>
           <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">reviewer</span> list &lt;owner/repo&gt;</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;# 리뷰어 목록</span></div>
           <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">repo</span> list</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 등록된 리포 목록</span></div>
+          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">skill</span> sync</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 스킬 동기화</span></div>
+          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">skill</span> status</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 스킬 동기화 상태 확인</span></div>
           <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">status</span></span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 환경 상태 확인</span></div>
         </div>
       </div>
@@ -803,6 +804,45 @@
           <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd"><span class="cli-arg">✓</span> junior   <span style="color:var(--green)">enabled</span></span></div>
           <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd"><span class="cli-arg">✓</span> senior   <span style="color:var(--green)">enabled</span></span></div>
         </div>
+      </div>
+    </section>
+
+    <!-- SKILL CMD -->
+    <section id="skill-cmd">
+      <div class="section-label">// prr skill</div>
+      <h2>스킬 동기화</h2>
+
+      <p>git pull로 PRR을 업데이트하거나, 커스텀한 스킬을 원본으로 되돌릴 때 사용한다. <code>PRR_DIR/skills/</code> 의 스킬을 <code>~/.claude/skills/</code> 에 그대로 복사한다.</p>
+
+      <div class="cli-block">
+        <div class="cli-bar">
+          <div class="cli-dots"><div class="cli-dot"></div><div class="cli-dot"></div><div class="cli-dot"></div></div>
+          <span class="cli-title">동기화</span>
+          <button class="cli-copy" onclick="copyBlock(this)">copy</button>
+        </div>
+        <div class="cli-content">
+          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr skill <span class="cli-arg">sync</span></span></div>
+        </div>
+      </div>
+
+      <div class="cli-block">
+        <div class="cli-bar">
+          <div class="cli-dots"><div class="cli-dot"></div><div class="cli-dot"></div><div class="cli-dot"></div></div>
+          <span class="cli-title">상태 확인</span>
+          <button class="cli-copy" onclick="copyBlock(this)">copy</button>
+        </div>
+        <div class="cli-content">
+          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr skill <span class="cli-arg">status</span></span></div>
+        </div>
+      </div>
+
+      <div class="flow">
+<span class="flow-cmd">prr skill status</span>
+=== PRR 스킬 상태 ===
+
+  prr-add-reviewer         <span class="flow-ok">✓ 최신</span>
+  prr-review               <span class="flow-note">! 변경됨  → prr skill sync</span>
+  prr-scan                 <span class="flow-note">✗ 미설치  → prr skill sync</span>
       </div>
     </section>
 

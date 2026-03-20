@@ -34,20 +34,11 @@ echo 'export PATH="$PATH:$HOME/PRR"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-Claude Code 스킬 등록:
+스킬 등록:
 
 ```bash
-cp -r ~/PRR/skills/prr-review       ~/.claude/skills/
-cp -r ~/PRR/skills/prr-scan         ~/.claude/skills/
-cp -r ~/PRR/skills/prr-add-reviewer ~/.claude/skills/
+prr skill sync
 ```
-
-> **참고**: 스킬 파일(`~/.claude/skills/prr-*/SKILL.md`) 안의 `PRR_DIR` 경로를 실제 클론 경로로 수정해야 한다.
->
-> ```bash
-> # 클론 경로 확인
-> which prr | xargs dirname
-> ```
 
 환경 확인:
 
@@ -106,6 +97,8 @@ Claude Code에서 실행:
 | `prr reviewer add <owner/repo>` | 리뷰어 추가 |
 | `prr reviewer list <owner/repo>` | 리뷰어 목록 |
 | `prr repo list` | 등록된 리포 목록 |
+| `prr skill sync` | 스킬 동기화 (git pull 후 실행) |
+| `prr skill status` | 스킬 동기화 상태 확인 |
 | `prr status` | 환경 상태 확인 |
 
 ---
