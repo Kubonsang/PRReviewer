@@ -81,7 +81,7 @@ bash $PRR_DIR/scripts/delete_prr_comments.sh <REPO> <PR_NUMBER>
 - `side` — 추가·수정 라인은 `"RIGHT"`, 삭제 라인은 `"LEFT"`
 
 라인 번호는 반드시 diff 헝크(`@@ -a,b +c,d @@`)에서 계산한다.
-diff에 나타나지 않은 라인(변경 없는 코드)은 인라인 코멘트 대상이 아니다.
+diff에 나타나지 않은 라인(변경 없는 코드)에서 발견한 이슈는 보고하지 않는다.
 
 **이슈가 없는 경우:**
 - `lgtm_comment: true` → 코멘트 게시 (LGTM 섹션 포함)

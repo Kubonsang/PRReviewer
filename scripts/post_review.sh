@@ -13,8 +13,7 @@ set -euo pipefail
 # }
 #
 # 스크립트가 commit_id와 event를 자동으로 주입한 뒤 GitHub Reviews API로 게시한다.
-# 인라인 코멘트 게시 실패 시 (라인이 diff 범위 밖 등) 해당 항목을 요약 본문에 병합해
-# 일반 PR 코멘트로 폴백한다.
+# comments 배열의 라인은 반드시 diff 범위 내 라인이어야 한다.
 
 REPO="${1:?리포 인수가 필요합니다 (owner/repo)}"
 PR_NUMBER="${2:?PR 번호 인수가 필요합니다}"
@@ -56,36 +55,6 @@ print(json.dumps(review))
 PYEOF
 )
 
-# GitHub Reviews API로 게시 시도
-if echo "$FINAL_JSON" | gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
-    --method POST --input - > /dev/null 2>&1; then
-  echo "리뷰 게시 완료 (인라인 코멘트 포함)"
-  exit 0
-fi
-
-# 폴백: 인라인 코멘트를 요약 본문에 병합해 일반 PR 코멘트로 게시
-echo "인라인 코멘트 게시 실패. 일반 코멘트로 폴백합니다." >&2
-
-FALLBACK_BODY=$(python3 - "$REVIEW_FILE" <<'PYEOF'
-import json, sys
-
-with open(sys.argv[1]) as f:
-    review = json.load(f)
-
-body = review.get("body", "")
-comments = review.get("comments", [])
-
-if comments:
-    body += "\n\n### 🔧 개선 제안\n"
-    for c in comments:
-        body += f"\n#### `{c['path']}:{c['line']}`\n{c['body']}\n"
-
-print(body)
-PYEOF
-)
-
-TMPFILE=$(mktemp /tmp/prr_comment_XXXXXX)
-trap 'rm -f "$TMPFILE"' EXIT
-echo "$FALLBACK_BODY" > "$TMPFILE"
-gh pr comment "$PR_NUMBER" --repo "$REPO" --body-file "$TMPFILE"
-echo "일반 코멘트로 게시 완료"
+echo "$FINAL_JSON" | gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
+  --method POST --input -
+echo "리뷰 게시 완료"
