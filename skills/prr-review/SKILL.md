@@ -115,6 +115,9 @@ bash $PRR_DIR/scripts/delete_prr_comments.sh <REPO> <PR_NUMBER>
 ### 💬 마무리
 {summary 내용}
 
+---
+🤖 *이 리뷰는 AI가 작성했습니다.*
+
 <!-- PRR-AUTO-REVIEW -->
 ```
 
