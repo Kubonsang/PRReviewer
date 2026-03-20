@@ -67,6 +67,10 @@ PRR/
 │   ├── delete_prr_comments.sh       # 이전 PRR 코멘트 삭제
 │   └── notify.sh                    # macOS 데스크탑 알림
 │
+├── skills/
+│   ├── prr-review/SKILL.md          # /prr-review 스킬 정의
+│   └── prr-scan/SKILL.md            # /prr-scan 스킬 정의
+│
 ├── templates/
 │   └── reviewer_default.json        # prr init 시 복사할 기본 리뷰어
 │
@@ -79,12 +83,11 @@ PRR/
                 └── senior.json
 ```
 
-### Claude Code 스킬 위치
+### Claude Code 스킬 등록
 
-```
-~/.claude/skills/
-├── prr-review/SKILL.md              # /prr-review 스킬
-└── prr-scan/SKILL.md                # /prr-scan 스킬
+```bash
+cp -r skills/prr-review ~/.claude/skills/
+cp -r skills/prr-scan   ~/.claude/skills/
 ```
 
 ---

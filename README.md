@@ -41,7 +41,12 @@ cp -r ~/PRR/skills/prr-review ~/.claude/skills/
 cp -r ~/PRR/skills/prr-scan  ~/.claude/skills/
 ```
 
-> **참고**: `~/.claude/skills/prr-review/SKILL.md` 와 `~/.claude/skills/prr-scan/SKILL.md` 안의 `PRR_DIR` 경로를 실제 클론 경로로 수정해야 한다.
+> **참고**: 스킬 파일(`~/.claude/skills/prr-*/SKILL.md`) 안의 `PRR_DIR` 경로를 실제 클론 경로로 수정해야 한다.
+>
+> ```bash
+> # 클론 경로 확인
+> which prr | xargs dirname
+> ```
 
 환경 확인:
 
