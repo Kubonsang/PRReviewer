@@ -519,6 +519,108 @@
     .constraint-grid { grid-template-columns: 1fr; }
   }
 
+  /* ── EXAMPLE SECTION ── */
+  .example-scenario {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 16px 20px;
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+  .example-scenario strong { color: var(--text); }
+
+  .example-steps { display: flex; flex-direction: column; gap: 28px; margin-bottom: 36px; }
+  .example-step { display: flex; gap: 20px; }
+  .example-step-badge {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+  }
+  .example-step-body { flex: 1; }
+  .example-step-title { font-weight: 500; color: var(--text); margin-bottom: 8px; }
+  .example-step-desc { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+
+  /* GitHub comment mock */
+  .gh-mock { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-top: 20px; }
+  .gh-mock-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .gh-mock-header .gh-avatar {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
+  .gh-mock-tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: auto;
+  }
+  .gh-mock-tag.inline { background: rgba(123,163,224,0.15); color: var(--blue); border: 1px solid rgba(123,163,224,0.3); }
+  .gh-mock-tag.summary { background: rgba(180,127,224,0.15); color: var(--purple); border: 1px solid rgba(180,127,224,0.3); }
+  .gh-mock-diff {
+    background: var(--mono-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .gh-mock-diff .diff-line-num { color: #3a3a4e; margin-right: 12px; user-select: none; }
+  .gh-mock-diff .diff-added { color: var(--green); }
+  .gh-mock-body {
+    padding: 16px 20px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  .gh-mock-body .severity-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 1px 8px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+  }
+  .severity-medium { background: rgba(232,160,69,0.15); color: var(--accent); border: 1px solid rgba(232,160,69,0.3); }
+  .severity-low    { background: rgba(82,214,138,0.15);  color: var(--green);  border: 1px solid rgba(82,214,138,0.3); }
+  .gh-mock-body .ai-footer {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+
+  /* field table */
+  .field-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  .field-table th, .field-table td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; }
+  .field-table th { background: var(--surface2); color: var(--muted); font-weight: 400; font-size: 11px; letter-spacing: 0.5px; }
+  .field-table td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); white-space: nowrap; }
+  .field-table td:nth-child(2) { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--blue); }
+  .field-table .req { color: var(--red); font-size: 11px; }
+  .field-table .opt { color: var(--muted); font-size: 11px; }
+
   /* ── ANIMATIONS ── */
   @keyframes blink {
     0%, 100% { opacity: 1; }
@@ -572,6 +674,10 @@
         <div class="nav-label">구조</div>
         <a class="nav-link" href="#directory">디렉터리</a>
         <a class="nav-link" href="#edge">엣지케이스</a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">예시</div>
+        <a class="nav-link" href="#example">실사용 예시</a>
       </div>
     </nav>
   </aside>
@@ -922,7 +1028,7 @@
       <div class="section-label purple">// Claude Code 스킬</div>
       <h2>/prr-review</h2>
 
-      <p>등록된 모든 활성 리뷰어가 순서대로 PR을 분석하고, 각자 별도의 GitHub 코멘트를 남긴다.</p>
+      <p>등록된 모든 활성 리뷰어가 순서대로 PR을 분석한다. 발견된 이슈는 해당 코드 라인에 <strong>인라인 코멘트</strong>로, 나머지 요약(리뷰 기준·칭찬·마무리)은 별도의 <strong>PR 코멘트</strong> 하나로 게시한다.</p>
 
       <div class="skill-block">
         <div class="skill-bar">
@@ -938,21 +1044,24 @@
 <span class="flow-skill">/prr-review owner/repo 42</span>
 │
 ├─ env.json 로드 → exclude_paths, on_update 파악
-├─ gh pr diff 42 --repo owner/repo
+├─ <span class="flow-cmd">gh pr diff 42 --repo owner/repo</span>
 │   └─ exclude_paths 패턴 매칭으로 파일 블록 제거
 │
 ├─ on_update="review" 시
 │   └─ 이전 PRR 코멘트 삭제 (<span class="flow-note">&lt;!-- PRR-AUTO-REVIEW --&gt;</span> 마커 기반)
 │
-├─ [junior.json] 리뷰어 ────────────────────────
-│   ├─ 페르소나 채택 (focus / ignore / severity)
-│   ├─ diff 검토 → 이슈 목록 작성
-│   └─ <span class="flow-ok">gh pr comment → GitHub 코멘트 게시</span>
+├─ [junior.json] 리뷰어 ────────────────────────────────
+│   ├─ 페르소나 채택 (focus / ignore / severity_threshold)
+│   ├─ diff 헝크에서 파일·라인 번호 계산
+│   ├─ diff 검토 → 이슈 추출 (path + line + 설명)
+│   ├─ <span class="flow-ok">인라인 코멘트</span> → 이슈를 각 코드 라인에 게시
+│   └─ <span class="flow-ok">요약 코멘트</span>  → review_basis / praise / summary 게시
 │
-└─ [senior.json] 리뷰어 ────────────────────────
-    ├─ 페르소나 채택 (focus / ignore / severity)
-    ├─ diff 검토 → 이슈 목록 작성
-    └─ <span class="flow-ok">gh pr comment → GitHub 코멘트 게시</span>
+└─ [senior.json] 리뷰어 ────────────────────────────────
+    ├─ 페르소나 채택
+    ├─ diff 검토 → 이슈 추출
+    ├─ <span class="flow-ok">인라인 코멘트</span> 게시
+    └─ <span class="flow-ok">요약 코멘트</span>  게시
       </div>
     </section>
 
@@ -1012,10 +1121,10 @@
           <button class="cli-copy" onclick="copyBlock(this)">copy</button>
         </div>
         <div class="code-body"><span class="kw">{</span>
-  <span class="key">"id"</span>:               <span class="str">"junior"</span>,
-  <span class="key">"enabled"</span>:         <span class="kw">true</span>,
-  <span class="key">"comment_header"</span>:  <span class="str">"🌱 Junior Reviewer"</span>,
-  <span class="key">"persona"</span>:         <span class="str">"당신은 1년차 주니어 개발자입니다..."</span>,
+  <span class="key">"id"</span>:                 <span class="str">"junior"</span>,
+  <span class="key">"enabled"</span>:           <span class="kw">true</span>,
+  <span class="key">"comment_header"</span>:    <span class="str">"🌱 Junior Reviewer"</span>,
+  <span class="key">"persona"</span>:           <span class="str">"당신은 1년차 주니어 개발자입니다..."</span>,
   <span class="key">"focus"</span>: [
     <span class="str">"변수명·함수명이 역할을 명확히 드러내는가"</span>,
     <span class="str">"명백한 로직 오류나 누락된 예외처리"</span>,
@@ -1026,19 +1135,39 @@
     <span class="str">"성능 최적화"</span>,
     <span class="str">"보안 취약점"</span>
   ],
-  <span class="key">"severity_threshold"</span>: <span class="str">"low"</span>,  <span class="cmt">// low | medium | high</span>
+  <span class="key">"output_language"</span>:   <span class="str">"ko"</span>,
+  <span class="key">"severity_threshold"</span>: <span class="str">"low"</span>,
   <span class="key">"lgtm_comment"</span>:       <span class="kw">true</span>,
   <span class="key">"tone"</span>:              <span class="str">"친근하고 격려하는 말투. 동료 개발자를 응원하는 느낌으로."</span>,
   <span class="key">"comment_sections"</span>:  [<span class="str">"review_basis"</span>, <span class="str">"praise"</span>, <span class="str">"issues"</span>, <span class="str">"summary"</span>]
 <span class="kw">}</span></div>
       </div>
+
+      <h3>필드 레퍼런스</h3>
+      <table class="field-table">
+        <thead><tr><th>필드</th><th>타입</th><th>필수</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td>string</td><td><span class="req">✓</span></td><td>리뷰어 식별자. 파일명(<code>id.json</code>)과 일치해야 한다.</td></tr>
+          <tr><td>enabled</td><td>boolean</td><td><span class="req">✓</span></td><td><code>false</code>로 설정 시 해당 리뷰어를 건너뛴다.</td></tr>
+          <tr><td>comment_header</td><td>string</td><td><span class="req">✓</span></td><td>GitHub 코멘트 상단에 표시되는 제목.</td></tr>
+          <tr><td>persona</td><td>string</td><td><span class="req">✓</span></td><td>리뷰어의 역할·관점·배경. 리뷰 방식 전체를 결정한다.</td></tr>
+          <tr><td>focus</td><td>array</td><td><span class="req">✓</span></td><td>중점적으로 검토할 항목 목록.</td></tr>
+          <tr><td>ignore</td><td>array</td><td><span class="req">✓</span></td><td>검토하지 않을 항목 목록.</td></tr>
+          <tr><td>output_language</td><td>string</td><td><span class="opt">—</span></td><td>리뷰 코멘트 작성 언어. 예: <code>"ko"</code>, <code>"en"</code>. 없으면 <code>persona</code> 언어를 따른다.</td></tr>
+          <tr><td>severity_threshold</td><td>string</td><td><span class="opt">—</span></td><td>보고할 최소 심각도. <code>"low"</code>(기본) · <code>"medium"</code> · <code>"high"</code>. 이 값 미만의 이슈는 생략된다.</td></tr>
+          <tr><td>lgtm_comment</td><td>boolean</td><td><span class="opt">—</span></td><td>이슈가 없을 때 LGTM 코멘트 게시 여부. 기본 <code>true</code>.</td></tr>
+          <tr><td>tone</td><td>string</td><td><span class="opt">—</span></td><td>코멘트 말투·태도. 없으면 중립적 서술체를 사용한다.</td></tr>
+          <tr><td>comment_sections</td><td>array</td><td><span class="opt">—</span></td><td>요약 PR 코멘트에 포함할 섹션 순서. 없으면 <code>["issues"]</code>.</td></tr>
+        </tbody>
+      </table>
+
       <h3>comment_sections 옵션</h3>
       <table class="tech-table">
         <thead><tr><th>값</th><th>섹션 내용</th></tr></thead>
         <tbody>
           <tr><td><code>"review_basis"</code></td><td>집중 항목(<code>focus</code>)과 검토 제외 항목(<code>ignore</code>) 요약</td></tr>
           <tr><td><code>"praise"</code></td><td>diff에서 잘 작성된 코드·패턴 언급. 칭찬할 것이 없으면 섹션 생략</td></tr>
-          <tr><td><code>"issues"</code></td><td>발견된 이슈 목록. 이슈가 없으면 ✅ LGTM 메시지로 대체</td></tr>
+          <tr><td><code>"issues"</code></td><td>인라인 코멘트로 게시된 이슈 수 요약. 이슈 없으면 ✅ LGTM으로 대체</td></tr>
           <tr><td><code>"summary"</code></td><td><code>tone</code>에 맞는 마무리 한마디</td></tr>
         </tbody>
       </table>
@@ -1146,6 +1275,150 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- EXAMPLE -->
+    <section id="example">
+      <div class="section-label">// 실사용 예시</div>
+      <h2>실사용 예시</h2>
+
+      <div class="example-scenario">
+        <strong>시나리오</strong> — TypeScript 백엔드 리포 <code>myorg/backend</code>에
+        PR #42 "feat: JWT 인증 추가"가 올라왔다. 처음 등록하는 리포이고,
+        주니어·시니어 두 리뷰어를 붙이려 한다.
+      </div>
+
+      <h3>1단계 — 최초 세팅 <span style="font-size:12px;color:var(--muted);font-weight:300">(처음 한 번만)</span></h3>
+      <div class="example-steps">
+        <div class="example-step">
+          <div class="example-step-badge">1</div>
+          <div class="example-step-body">
+            <div class="example-step-title">리포 등록</div>
+            <div class="example-step-desc">설정 디렉터리와 기본 리뷰어 파일을 생성한다.</div>
+            <div class="cli-block">
+              <div class="cli-bar">
+                <div class="cli-dots"><div class="cli-dot"></div><div class="cli-dot"></div><div class="cli-dot"></div></div>
+                <span class="cli-title">terminal</span>
+              </div>
+              <div class="cli-content">
+                <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr init <span class="cli-arg">myorg/backend</span></span></div>
+                <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--green)">✓ configs/repos/myorg__backend/ 생성됨</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="example-step">
+          <div class="example-step-badge">2</div>
+          <div class="example-step-body">
+            <div class="example-step-title">프로젝트 스캔</div>
+            <div class="example-step-desc">로컬 소스를 분석해 env.json을 자동 생성한다. AI 코딩 툴에서 실행한다.</div>
+            <div class="skill-block">
+              <div class="skill-bar">
+                <span class="skill-label">AI 코딩 툴 스킬</span>
+              </div>
+              <div class="cli-content">
+                <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-scan <span class="cli-arg">~/projects/backend</span> <span class="cli-arg">myorg/backend</span></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="example-step">
+          <div class="example-step-badge">3</div>
+          <div class="example-step-body">
+            <div class="example-step-title">리뷰어 추가</div>
+            <div class="example-step-desc">AI가 프로젝트 특성에 맞는 리뷰어 후보를 추천한다. 선택하면 페르소나를 자동 구성해 저장한다.</div>
+            <div class="skill-block">
+              <div class="skill-bar">
+                <span class="skill-label">AI 코딩 툴 스킬</span>
+              </div>
+              <div class="cli-content">
+                <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-add-reviewer <span class="cli-arg">myorg/backend</span></span></div>
+                <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--muted)">추천 리뷰어: 1) TS 타입 안전성 전문가  2) 보안 리뷰어  3) 주니어 ...</span></div>
+                <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--muted)">선택: 1, 2</span></div>
+                <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--green)">✓ ts-safety.json, security.json 저장됨</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>2단계 — PR 리뷰 실행</h3>
+      <div class="example-steps">
+        <div class="example-step">
+          <div class="example-step-badge">4</div>
+          <div class="example-step-body">
+            <div class="example-step-title">PR 리뷰</div>
+            <div class="example-step-desc">PR 번호를 지정해 실행한다. 등록된 모든 활성 리뷰어가 순서대로 diff를 분석한다.</div>
+            <div class="skill-block">
+              <div class="skill-bar">
+                <span class="skill-label">AI 코딩 툴 스킬</span>
+              </div>
+              <div class="cli-content">
+                <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-review <span class="cli-arg">myorg/backend</span> <span class="cli-arg">42</span></span></div>
+                <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--muted)">[ts-safety] diff 분석 중...</span></div>
+                <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--green)">✓ 인라인 코멘트 2개 + 요약 코멘트 게시</span></div>
+                <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--muted)">[security] diff 분석 중...</span></div>
+                <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--green)">✓ 인라인 코멘트 1개 + 요약 코멘트 게시</span></div>
+                <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--green)">✓ PR #42 리뷰 완료 (2개 리뷰어)</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>3단계 — GitHub에서 결과 확인</h3>
+      <p style="margin-bottom:20px">각 이슈는 해당 코드 라인 아래 인라인 코멘트로 표시되고, 리뷰어별 요약은 PR 코멘트로 별도 게시된다.</p>
+
+      <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">인라인 코멘트 — <code>src/auth/jwt.ts:38</code></p>
+      <div class="gh-mock">
+        <div class="gh-mock-header">
+          <div class="gh-avatar">🔐</div>
+          <span style="color:var(--text)">Security Reviewer</span>
+          <span>commented on</span>
+          <code style="color:var(--accent)">src/auth/jwt.ts</code>
+          <span class="gh-mock-tag inline">인라인</span>
+        </div>
+        <div class="gh-mock-diff">
+          <span class="diff-line-num">36</span><span style="color:var(--muted)">  const payload = { userId, role };</span><br>
+          <span class="diff-line-num">37</span><span style="color:var(--muted)">  const secret  = process.env.JWT_SECRET;</span><br>
+          <span class="diff-line-num">38</span><span class="diff-added">+ const token   = jwt.sign(payload, secret);</span>
+        </div>
+        <div class="gh-mock-body">
+          <span class="severity-badge severity-medium">심각도: medium</span><br>
+          <code>jwt.sign()</code>에 <code>expiresIn</code> 옵션이 없어서 토큰이 만료되지 않습니다.
+          탈취된 경우 무효화할 방법이 없어 보안 리스크가 생깁니다.<br><br>
+          <code>jwt.sign(payload, secret, &#123; expiresIn: '1h' &#125;)</code> 형태로 만료 시간을 지정하는 걸 권장합니다.
+          <div class="ai-footer">🤖 이 리뷰는 AI가 작성했습니다.</div>
+        </div>
+      </div>
+
+      <p style="font-size:12.5px;color:var(--muted);margin:24px 0 10px">요약 코멘트 — Security Reviewer</p>
+      <div class="gh-mock">
+        <div class="gh-mock-header">
+          <div class="gh-avatar">🔐</div>
+          <span style="color:var(--text)">Security Reviewer</span>
+          <span>left a review</span>
+          <span class="gh-mock-tag summary">요약</span>
+        </div>
+        <div class="gh-mock-body">
+          <strong style="font-size:15px">🔐 Security Reviewer</strong><br><br>
+          JWT 인증 구현을 검토했습니다. 핵심적인 보안 이슈 1건을 발견했습니다.<br><br>
+          <strong>📋 리뷰 기준</strong><br>
+          <span style="color:var(--muted)">집중: 인증·인가 취약점, 시크릿 노출, 입력 검증<br>
+          제외: 코드 스타일, 성능 최적화</span><br><br>
+          <strong>✨ 잘한 점</strong><br>
+          <span style="color:var(--muted)"><code>process.env.JWT_SECRET</code>을 환경 변수로 분리한 점이 좋습니다.
+          시크릿을 하드코딩하지 않은 올바른 접근입니다.</span><br><br>
+          <strong>💬 마무리</strong><br>
+          <span style="color:var(--muted)">토큰 만료 처리만 추가하면 전반적으로 견고한 인증 구현이 됩니다.</span>
+          <div class="ai-footer">🤖 이 리뷰는 AI가 작성했습니다. &nbsp;·&nbsp; <!-- PRR-AUTO-REVIEW --></div>
+        </div>
+      </div>
+
     </section>
 
     <!-- FOOTER -->
