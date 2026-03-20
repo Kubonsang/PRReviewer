@@ -39,6 +39,7 @@ case "$COMMAND" in
     echo "  /prr-scan <local-path> <owner/repo>   env.json 자동 생성"
     echo "  /prr-add-reviewer <owner/repo>        리뷰어 추천 및 설정"
     echo "  /prr-review <owner/repo> <pr-number>  PR 리뷰 실행"
+    echo "  /prr-followup <owner/repo> <pr-number> 수정 여부 확인 후 답글 게시"
     echo ""
     echo "예시:"
     echo "  prr init owner/my-repo"
