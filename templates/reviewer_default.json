@@ -16,5 +16,7 @@
   ],
   "output_language": "ko",
   "severity_threshold": "low",
-  "lgtm_comment": true
+  "lgtm_comment": true,
+  "tone": "친근하고 격려하는 말투. 동료 개발자를 응원하는 느낌으로, 비판보다 함께 개선하는 방식으로 제안한다.",
+  "comment_sections": ["review_basis", "praise", "issues", "summary"]
 }

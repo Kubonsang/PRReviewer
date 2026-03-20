@@ -1,3 +1,8 @@
+---
+name: prr-review
+description: PRR PR 코드 리뷰어. 사용자가 /prr-review <owner/repo> <pr-number>를 실행할 때 동작한다. 설정된 리뷰어 페르소나별로 GitHub PR diff를 분석하고, 각 리뷰어 이름으로 GitHub 코멘트를 자동 게시한다. prr-review 또는 PR 리뷰 자동화 관련 요청이 있을 때 반드시 이 스킬을 사용한다.
+---
+
 # PRR — PR 코드 리뷰어
 
 ## 트리거
@@ -57,6 +62,8 @@ bash $PRR_DIR/scripts/delete_prr_comments.sh <REPO> <PR_NUMBER>
 - `ignore` — 검토 제외 항목 목록
 - `severity_threshold` — 보고 최소 심각도 (`low` | `medium` | `high`)
 - `lgtm_comment` — LGTM 시 코멘트 게시 여부 (boolean)
+- `tone` — 코멘트 말투·태도 (없으면 중립적 서술체 사용)
+- `comment_sections` — 포함할 섹션 순서 목록 (없으면 `["issues"]` 기본값)
 
 **리뷰 수행 지침:**
 - `persona` 에 명시된 역할과 관점을 채택한다
@@ -65,29 +72,57 @@ bash $PRR_DIR/scripts/delete_prr_comments.sh <REPO> <PR_NUMBER>
 - `severity_threshold` 미만의 이슈는 보고하지 않는다 (low < medium < high)
 - 코드의 정확성, 보안, 안정성, 유지보수성을 우선 검토한다
 - 근거 없는 단정 표현을 피한다. 증거가 약하면 추측임을 밝힌다
+- `tone` 에 명시된 말투·태도로 일관되게 작성한다
 
 **이슈가 없는 경우:**
-- `lgtm_comment: true` → 코멘트 게시
+- `lgtm_comment: true` → 코멘트 게시 (LGTM 섹션 포함)
 - `lgtm_comment: false` → 코멘트 생략
-
-**이슈가 있는 경우 — 출력 형식:**
-```
----
-**파일명:줄번호**
-심각도: low | medium | high
-내용: (구체적인 문제 설명과 개선 제안)
----
-```
 
 ### Step 6 — 코멘트 게시
 
-코멘트 본문 구성:
-```
-<comment_header>
+`comment_sections` 에 명시된 순서대로 섹션을 구성한다. 각 섹션 정의:
 
-<리뷰 내용 또는 "특이사항 없음. LGTM ✓">
+| 섹션 키 | 내용 |
+|---------|------|
+| `review_basis` | 이번 리뷰에서 집중한 항목(`focus`)과 검토 제외 항목(`ignore`)을 간략히 설명 |
+| `praise` | diff에서 잘 작성된 코드, 좋은 패턴, 개선된 부분을 구체적으로 언급. 칭찬할 것이 없으면 섹션 생략 |
+| `issues` | 발견된 이슈 목록. 이슈가 없으면 LGTM 메시지로 대체 |
+| `summary` | `tone`에 맞는 마무리 한마디 |
+
+**이슈 항목 형식** (`issues` 섹션 내):
+```markdown
+#### `파일명:줄번호`
+> **심각도:** low | medium | high
+
+문제 설명과 개선 제안. `tone`에 맞는 말투로 작성한다.
+```
+
+**전체 코멘트 구조:**
+```markdown
+## {comment_header}
+
+{tone에 맞는 첫 인사 한 문장}
+
+### 📋 리뷰 기준
+{review_basis 내용}
+
+### ✨ 잘한 점
+{praise 내용}
+
+### 🔧 개선 제안
+{issues 내용}
+
+### 💬 마무리
+{summary 내용}
 
 <!-- PRR-AUTO-REVIEW -->
+```
+
+`comment_sections` 에 없는 섹션은 생략한다.
+이슈가 없고 `lgtm_comment: true` 이면 `issues` 섹션 대신 LGTM 메시지를 넣는다:
+```markdown
+### ✅ LGTM
+특이사항 없음. 코드 잘 작성됐어요! ✓
 ```
 
 게시:

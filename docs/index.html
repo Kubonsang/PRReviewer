@@ -558,6 +558,7 @@
       <div class="nav-section">
         <div class="nav-label">Claude Code 스킬</div>
         <a class="nav-link skill-link" href="#skill-scan">/prr-scan</a>
+        <a class="nav-link skill-link" href="#skill-add-reviewer">/prr-add-reviewer</a>
         <a class="nav-link skill-link" href="#skill-review">/prr-review</a>
       </div>
       <div class="nav-section">
@@ -669,6 +670,21 @@
         </div>
       </div>
 
+      <h3>스킬 등록</h3>
+      <div class="cli-block">
+        <div class="cli-bar">
+          <div class="cli-dots"><div class="cli-dot"></div><div class="cli-dot"></div><div class="cli-dot"></div></div>
+          <span class="cli-title">terminal</span>
+          <button class="cli-copy" onclick="copyBlock(this)">copy</button>
+        </div>
+        <div class="cli-content">
+          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">cp -r ~/PRR/skills/prr-review       ~/.claude/skills/</span></div>
+          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">cp -r ~/PRR/skills/prr-scan         ~/.claude/skills/</span></div>
+          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">cp -r ~/PRR/skills/prr-add-reviewer ~/.claude/skills/</span></div>
+        </div>
+      </div>
+      <p style="font-size:12.5px;margin-top:-4px">스킬 파일(<code>~/.claude/skills/prr-*/SKILL.md</code>) 안의 <code>PRR_DIR</code> 경로를 실제 클론 경로로 수정해야 한다. <code>which prr | xargs dirname</code> 으로 확인.</p>
+
       <h3>전체 워크플로우</h3>
       <div class="steps">
         <div class="step">
@@ -689,7 +705,7 @@
           <div class="step-num">3</div>
           <div>
             <div class="step-title">리뷰어 설정</div>
-            <div class="step-desc">기본 리뷰어를 수정하거나 새 리뷰어를 추가한다.<br><code>prr reviewer add owner/my-repo</code></div>
+            <div class="step-desc">AI가 프로젝트에 맞는 리뷰어 후보를 추천한다. 선택하면 페르소나를 자동 구성해 저장한다.<br><span class="skill-cmd">/prr-add-reviewer owner/my-repo</span></div>
           </div>
         </div>
         <div class="step">
@@ -825,6 +841,41 @@
       </table>
     </section>
 
+    <!-- SKILL: ADD REVIEWER -->
+    <section id="skill-add-reviewer">
+      <div class="section-label purple">// Claude Code 스킬</div>
+      <h2>/prr-add-reviewer</h2>
+
+      <p>프로젝트 <strong>env.json</strong>을 읽어 기술 스택에 맞는 리뷰어 후보를 추천한다. 선택하면 페르소나·집중 항목·무시 항목을 자동으로 구성해 저장한다.</p>
+
+      <div class="skill-block">
+        <div class="skill-bar">
+          <span class="skill-label">Claude Code 스킬</span>
+          <button class="cli-copy" onclick="copyBlock(this)">copy</button>
+        </div>
+        <div class="cli-content">
+          <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-add-reviewer <span class="cli-arg">owner/my-repo</span></span></div>
+        </div>
+      </div>
+
+      <div class="flow">
+<span class="flow-skill">/prr-add-reviewer owner/repo</span>
+│
+├─ env.json 로드 → 언어·프레임워크·의존성 파악
+├─ 기존 리뷰어 목록 확인
+│
+├─ <span class="flow-ok">리뷰어 후보 4–6개 추천 출력</span>  <span class="flow-note">(프로젝트 특성 기반)</span>
+│   예) 1. senior   — 아키텍처·패턴 전반
+│       2. netcode  — 네트워크 동기화·RPC 전문가
+│       3. performance — GC·풀링 최적화 전문가
+│
+├─ 사용자 선택
+├─ persona / focus / ignore 자동 구성 → JSON 출력
+├─ 사용자 확인 [Y/n]
+└─ <span class="flow-ok">reviewers/{id}.json 저장</span>
+      </div>
+    </section>
+
     <!-- SKILL: REVIEW -->
     <section id="skill-review">
       <div class="section-label purple">// Claude Code 스킬</div>
@@ -912,7 +963,7 @@
       <div class="section-label">// 설정</div>
       <h2>reviewer.json</h2>
 
-      <p>리뷰어의 페르소나, 집중 항목, 무시 항목을 정의한다. <span style="color:var(--purple);font-family:'JetBrains Mono',monospace;font-size:13px">/prr-review</span> 스킬이 이 파일을 읽어 리뷰 방식을 결정한다.</p>
+      <p>리뷰어의 페르소나, 집중 항목, 무시 항목을 정의한다. <span style="color:var(--purple);font-family:'JetBrains Mono',monospace;font-size:13px">/prr-review</span> 스킬이 이 파일을 읽어 리뷰 방식과 코멘트 형식을 결정한다.</p>
 
       <div class="code-block">
         <div class="code-header">
@@ -935,9 +986,22 @@
     <span class="str">"보안 취약점"</span>
   ],
   <span class="key">"severity_threshold"</span>: <span class="str">"low"</span>,  <span class="cmt">// low | medium | high</span>
-  <span class="key">"lgtm_comment"</span>:       <span class="kw">true</span>
+  <span class="key">"lgtm_comment"</span>:       <span class="kw">true</span>,
+  <span class="key">"tone"</span>:              <span class="str">"친근하고 격려하는 말투. 동료 개발자를 응원하는 느낌으로."</span>,
+  <span class="key">"comment_sections"</span>:  [<span class="str">"review_basis"</span>, <span class="str">"praise"</span>, <span class="str">"issues"</span>, <span class="str">"summary"</span>]
 <span class="kw">}</span></div>
       </div>
+      <h3>comment_sections 옵션</h3>
+      <table class="tech-table">
+        <thead><tr><th>값</th><th>섹션 내용</th></tr></thead>
+        <tbody>
+          <tr><td><code>"review_basis"</code></td><td>집중 항목(<code>focus</code>)과 검토 제외 항목(<code>ignore</code>) 요약</td></tr>
+          <tr><td><code>"praise"</code></td><td>diff에서 잘 작성된 코드·패턴 언급. 칭찬할 것이 없으면 섹션 생략</td></tr>
+          <tr><td><code>"issues"</code></td><td>발견된 이슈 목록. 이슈가 없으면 ✅ LGTM 메시지로 대체</td></tr>
+          <tr><td><code>"summary"</code></td><td><code>tone</code>에 맞는 마무리 한마디</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12.5px"><code>tone</code>과 <code>comment_sections</code>는 선택 필드. 없으면 <code>["issues"]</code>와 중립 말투를 사용한다.</p>
     </section>
 
     <div class="divider"></div>
@@ -963,6 +1027,11 @@
 │   ├── <span class="t-file">delete_prr_comments.sh</span>   <span class="t-note"># 이전 PRR 코멘트 삭제</span>
 │   └── <span class="t-file">notify.sh</span>                <span class="t-note"># macOS 알림</span>
 │
+├── <span class="t-skill">skills/</span>                      <span class="t-note"># Claude Code 스킬 소스 (배포용)</span>
+│   ├── <span class="t-skill">prr-review/SKILL.md</span>      <span class="t-note"># /prr-review 스킬 정의</span>
+│   ├── <span class="t-skill">prr-scan/SKILL.md</span>        <span class="t-note"># /prr-scan 스킬 정의</span>
+│   └── <span class="t-skill">prr-add-reviewer/SKILL.md</span> <span class="t-note"># /prr-add-reviewer 스킬 정의</span>
+│
 ├── <span class="t-dir">templates/</span>
 │   └── <span class="t-file">reviewer_default.json</span>    <span class="t-note"># init 시 복사되는 기본 리뷰어</span>
 │
@@ -973,9 +1042,10 @@
             ├── <span class="t-file">junior.json</span>
             └── <span class="t-file">senior.json</span>
 
-<span class="t-skill">~/.claude/skills/</span>               <span class="t-note"># Claude Code 전역 스킬</span>
-├── <span class="t-skill">prr-review/SKILL.md</span>          <span class="t-note"># /prr-review 스킬 정의</span>
-└── <span class="t-skill">prr-scan/SKILL.md</span>            <span class="t-note"># /prr-scan 스킬 정의</span></div>
+<span class="t-skill">~/.claude/skills/</span>               <span class="t-note"># Claude Code 전역 스킬 (cp 로 설치)</span>
+├── <span class="t-skill">prr-review/SKILL.md</span>
+├── <span class="t-skill">prr-scan/SKILL.md</span>
+└── <span class="t-skill">prr-add-reviewer/SKILL.md</span></div>
     </section>
 
     <!-- EDGE CASES -->

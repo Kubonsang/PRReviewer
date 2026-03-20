@@ -43,6 +43,7 @@ prr status                       # 환경 상태 확인
 
 ```
 /prr-scan <local-path> <owner/repo>   # 프로젝트 분석 → env.json 생성
+/prr-add-reviewer <owner/repo>        # 리뷰어 후보 추천 → reviewer JSON 생성
 /prr-review <owner/repo> <pr-number>  # PR 리뷰 실행 → GitHub 코멘트 게시
 ```
 
@@ -69,7 +70,8 @@ PRR/
 │
 ├── skills/
 │   ├── prr-review/SKILL.md          # /prr-review 스킬 정의
-│   └── prr-scan/SKILL.md            # /prr-scan 스킬 정의
+│   ├── prr-scan/SKILL.md            # /prr-scan 스킬 정의
+│   └── prr-add-reviewer/SKILL.md    # /prr-add-reviewer 스킬 정의
 │
 ├── templates/
 │   └── reviewer_default.json        # prr init 시 복사할 기본 리뷰어
@@ -86,8 +88,9 @@ PRR/
 ### Claude Code 스킬 등록
 
 ```bash
-cp -r skills/prr-review ~/.claude/skills/
-cp -r skills/prr-scan   ~/.claude/skills/
+cp -r skills/prr-review       ~/.claude/skills/
+cp -r skills/prr-scan         ~/.claude/skills/
+cp -r skills/prr-add-reviewer ~/.claude/skills/
 ```
 
 ---
@@ -142,9 +145,20 @@ cp -r skills/prr-scan   ~/.claude/skills/
   ],
   "output_language": "ko",
   "severity_threshold": "low",
-  "lgtm_comment": true
+  "lgtm_comment": true,
+  "tone": "친근하고 격려하는 말투. 동료 개발자를 응원하는 느낌으로.",
+  "comment_sections": ["review_basis", "praise", "issues", "summary"]
 }
 ```
+
+| `comment_sections` 값 | 섹션 내용 |
+|---|---|
+| `"review_basis"` | 집중 항목(`focus`)과 검토 제외 항목(`ignore`) 요약 |
+| `"praise"` | diff에서 잘 작성된 코드·패턴 언급 (없으면 섹션 생략) |
+| `"issues"` | 발견된 이슈 목록 (없으면 LGTM 메시지로 대체) |
+| `"summary"` | `tone`에 맞는 마무리 한마디 |
+
+`tone`과 `comment_sections` 필드는 선택값이다. 없으면 `["issues"]` 기본값과 중립 말투를 사용한다.
 
 ---
 

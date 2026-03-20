@@ -37,8 +37,9 @@ source ~/.zshrc
 Claude Code 스킬 등록:
 
 ```bash
-cp -r ~/PRR/skills/prr-review ~/.claude/skills/
-cp -r ~/PRR/skills/prr-scan  ~/.claude/skills/
+cp -r ~/PRR/skills/prr-review       ~/.claude/skills/
+cp -r ~/PRR/skills/prr-scan         ~/.claude/skills/
+cp -r ~/PRR/skills/prr-add-reviewer ~/.claude/skills/
 ```
 
 > **참고**: 스킬 파일(`~/.claude/skills/prr-*/SKILL.md`) 안의 `PRR_DIR` 경로를 실제 클론 경로로 수정해야 한다.
@@ -74,8 +75,16 @@ Claude Code에서 실행:
 
 ### 3. 리뷰어 설정 (선택)
 
+Claude Code에서 실행 (AI가 프로젝트에 맞는 리뷰어를 추천):
+
+```
+/prr-add-reviewer owner/my-repo
+```
+
+또는 CLI로 직접 추가:
+
 ```bash
-prr reviewer add owner/my-repo   # 새 리뷰어 추가
+prr reviewer add owner/my-repo   # 템플릿 복사 후 에디터로 편집
 prr reviewer list owner/my-repo  # 목록 확인
 ```
 
@@ -134,9 +143,19 @@ Claude Code에서 실행:
   "focus": ["로직 오류", "중복 코드"],
   "ignore": ["아키텍처 결정", "성능 최적화"],
   "severity_threshold": "low",
-  "lgtm_comment": true
+  "lgtm_comment": true,
+  "tone": "친근하고 격려하는 말투. 동료 개발자를 응원하는 느낌으로.",
+  "comment_sections": ["review_basis", "praise", "issues", "summary"]
 }
 ```
+
+`comment_sections` 옵션:
+- `"review_basis"` — 집중 항목과 검토 제외 항목 요약
+- `"praise"` — 잘 작성된 코드·패턴 언급 (없으면 섹션 생략)
+- `"issues"` — 발견된 이슈 목록 (없으면 LGTM 메시지로 대체)
+- `"summary"` — `tone`에 맞는 마무리 한마디
+
+`tone`과 `comment_sections`는 선택 필드. 없으면 `["issues"]`와 중립 말투를 사용한다.
 
 `on_update` 옵션:
 - `"skip"` — 기존 PRR 코멘트 유지 (기본값)

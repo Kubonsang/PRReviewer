@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PRR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+_PRR_SCRIPT="${BASH_SOURCE[0]}"
+while [[ -L "$_PRR_SCRIPT" ]]; do
+  _PRR_SCRIPT="$(readlink "$_PRR_SCRIPT")"
+done
+PRR_DIR="$(cd "$(dirname "$_PRR_SCRIPT")" && pwd)"
+unset _PRR_SCRIPT
 export PRR_DIR
 
 COMMAND="${1:-}"

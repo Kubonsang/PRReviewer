@@ -1,3 +1,8 @@
+---
+name: prr-scan
+description: PRR 프로젝트 스캔. 사용자가 /prr-scan <local-path> <owner/repo>를 실행할 때 동작한다. 로컬 프로젝트 파일을 분석해 언어·프레임워크·의존성을 파악하고, PRR 설정에 필요한 env.json을 자동 생성한다. prr-scan 또는 PRR 환경 초기화 관련 요청이 있을 때 반드시 이 스킬을 사용한다.
+---
+
 # PRR — 프로젝트 스캔
 
 ## 트리거
