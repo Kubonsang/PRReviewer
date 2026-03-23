@@ -1108,25 +1108,29 @@
           <button class="cli-copy" onclick="copyBlock(this)">copy</button>
         </div>
         <div class="code-body"><span class="kw">{</span>
-  <span class="key">"id"</span>:                 <span class="str">"junior"</span>,
+  <span class="key">"id"</span>:                 <span class="str">"security"</span>,
   <span class="key">"enabled"</span>:           <span class="kw">true</span>,
-  <span class="key">"comment_header"</span>:    <span class="str">"🌱 Junior Reviewer"</span>,
-  <span class="key">"persona"</span>:           <span class="str">"당신은 1년차 주니어 개발자입니다..."</span>,
+  <span class="key">"comment_header"</span>:    <span class="str">"🔐 Security Reviewer"</span>,
+  <span class="key">"persona"</span>:           <span class="str">"당신은 보안 전문 시니어 개발자입니다..."</span>,
   <span class="key">"focus"</span>: [
-    <span class="str">"변수명·함수명이 역할을 명확히 드러내는가"</span>,
-    <span class="str">"명백한 로직 오류나 누락된 예외처리"</span>,
-    <span class="str">"불필요한 중복 코드"</span>
+    <span class="str">"인증·인가 취약점"</span>,
+    <span class="str">"입력 검증"</span>,
+    <span class="str">"시크릿 노출"</span>
   ],
-  <span class="key">"ignore"</span>: [
-    <span class="str">"시스템 아키텍처 결정"</span>,
-    <span class="str">"성능 최적화"</span>,
-    <span class="str">"보안 취약점"</span>
+  <span class="key">"ignore"</span>: [<span class="str">"코드 스타일"</span>, <span class="str">"성능 최적화"</span>],
+  <span class="key">"rules"</span>: [
+    <span class="str">"SQL 쿼리는 파라미터 바인딩을 사용한다 (문자열 접합 금지)"</span>,
+    <span class="kw">{</span>
+      <span class="key">"rule"</span>:    <span class="str">"jwt.sign()에 expiresIn을 명시한다"</span>,
+      <span class="key">"reason"</span>: <span class="str">"만료 없는 토큰은 탈취 시 무효화 불가"</span>,
+      <span class="key">"example"</span>: <span class="str">"jwt.sign(payload, secret, { expiresIn: '1h' })"</span>
+    <span class="kw">}</span>
   ],
   <span class="key">"output_language"</span>:   <span class="str">"ko"</span>,
-  <span class="key">"severity_threshold"</span>: <span class="str">"low"</span>,
+  <span class="key">"severity_threshold"</span>: <span class="str">"medium"</span>,
   <span class="key">"lgtm_comment"</span>:       <span class="kw">true</span>,
-  <span class="key">"tone"</span>:              <span class="str">"친근하고 격려하는 말투. 동료 개발자를 응원하는 느낌으로."</span>,
-  <span class="key">"comment_sections"</span>:  [<span class="str">"review_basis"</span>, <span class="str">"praise"</span>, <span class="str">"issues"</span>, <span class="str">"summary"</span>]
+  <span class="key">"tone"</span>:              <span class="str">"간결하고 명확한 말투. 위반 사유와 수정 방법을 구체적으로."</span>,
+  <span class="key">"comment_sections"</span>:  [<span class="str">"review_basis"</span>, <span class="str">"issues"</span>, <span class="str">"summary"</span>]
 <span class="kw">}</span></div>
       </div>
 
@@ -1138,13 +1142,24 @@
           <tr><td>enabled</td><td>boolean</td><td><span class="req">✓</span></td><td><code>false</code>로 설정 시 해당 리뷰어를 건너뛴다.</td></tr>
           <tr><td>comment_header</td><td>string</td><td><span class="req">✓</span></td><td>GitHub 코멘트 상단에 표시되는 제목.</td></tr>
           <tr><td>persona</td><td>string</td><td><span class="req">✓</span></td><td>리뷰어의 역할·관점·배경. 리뷰 방식 전체를 결정한다.</td></tr>
-          <tr><td>focus</td><td>array</td><td><span class="req">✓</span></td><td>중점적으로 검토할 항목 목록.</td></tr>
+          <tr><td>focus</td><td>array</td><td><span class="req">✓</span></td><td>중점적으로 검토할 카테고리 목록.</td></tr>
           <tr><td>ignore</td><td>array</td><td><span class="req">✓</span></td><td>검토하지 않을 항목 목록.</td></tr>
+          <tr><td>rules</td><td>array</td><td><span class="opt">—</span></td><td>diff에서 명시적으로 위반 여부를 체크할 규칙 목록. 문자열 또는 <code>{ rule, reason?, example? }</code> 객체.</td></tr>
           <tr><td>output_language</td><td>string</td><td><span class="opt">—</span></td><td>리뷰 코멘트 작성 언어. 예: <code>"ko"</code>, <code>"en"</code>. 없으면 <code>persona</code> 언어를 따른다.</td></tr>
           <tr><td>severity_threshold</td><td>string</td><td><span class="opt">—</span></td><td>보고할 최소 심각도. <code>"low"</code>(기본) · <code>"medium"</code> · <code>"high"</code>. 이 값 미만의 이슈는 생략된다.</td></tr>
           <tr><td>lgtm_comment</td><td>boolean</td><td><span class="opt">—</span></td><td>이슈가 없을 때 LGTM 코멘트 게시 여부. 기본 <code>true</code>.</td></tr>
           <tr><td>tone</td><td>string</td><td><span class="opt">—</span></td><td>코멘트 말투·태도. 없으면 중립적 서술체를 사용한다.</td></tr>
           <tr><td>comment_sections</td><td>array</td><td><span class="opt">—</span></td><td>요약 PR 코멘트에 포함할 섹션 순서. 없으면 <code>["issues"]</code>.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>rules 항목 형식</h3>
+      <p style="font-size:13px;margin-bottom:12px"><code>focus</code>가 검토 카테고리라면, <code>rules</code>는 구체적인 패스/페일 체크리스트다. 위반이 발견되면 인라인 코멘트에 어떤 규칙을 어겼는지 명시된다.</p>
+      <table class="tech-table">
+        <thead><tr><th>형식</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><code>"규칙 설명"</code></td><td>간단한 문자열 규칙. 판단 기준이 명확할 때 사용</td></tr>
+          <tr><td><code>{ "rule": "...", "reason": "...", "example": "..." }</code></td><td><code>rule</code>은 필수. <code>reason</code>(위반 시 왜 문제인지), <code>example</code>(올바른 예시)은 선택</td></tr>
         </tbody>
       </table>
 

@@ -126,20 +126,38 @@ AI가 프로젝트에 맞는 리뷰어를 추천한다:
 
 ```json
 {
-  "id": "junior",
+  "id": "security",
   "enabled": true,
-  "comment_header": "🌱 Junior Reviewer",
-  "persona": "당신은 1년차 주니어 개발자입니다.",
-  "focus": ["로직 오류", "중복 코드"],
-  "ignore": ["아키텍처 결정", "성능 최적화"],
-  "severity_threshold": "low",
+  "comment_header": "🔐 Security Reviewer",
+  "persona": "당신은 보안 전문 시니어 개발자입니다.",
+  "focus": ["인증·인가 취약점", "입력 검증", "시크릿 노출"],
+  "ignore": ["코드 스타일", "성능 최적화"],
+  "rules": [
+    "SQL 쿼리는 파라미터 바인딩을 사용한다 (문자열 접합 금지)",
+    {
+      "rule": "jwt.sign()에 expiresIn을 명시한다",
+      "reason": "만료 없는 토큰은 탈취 시 무효화 불가",
+      "example": "jwt.sign(payload, secret, { expiresIn: '1h' })"
+    }
+  ],
+  "severity_threshold": "medium",
   "lgtm_comment": true,
-  "tone": "친근하고 격려하는 말투. 동료 개발자를 응원하는 느낌으로.",
-  "comment_sections": ["review_basis", "praise", "issues", "summary"]
+  "tone": "간결하고 명확한 말투. 위반 사유와 수정 방법을 구체적으로.",
+  "comment_sections": ["review_basis", "issues", "summary"]
 }
 ```
 
-`comment_sections` 옵션:
+#### `rules` 필드
+
+diff에서 **명시적으로 위반 여부를 체크**할 코드 규칙 목록. 선택 필드.
+
+- 문자열: 간단한 규칙
+- 객체: `rule`(필수) + `reason`(왜 문제인지) + `example`(올바른 예시)
+
+`focus` 가 검토 카테고리라면, `rules` 는 구체적인 체크리스트다.
+위반이 발견되면 인라인 코멘트에 어떤 규칙을 어겼는지 명시된다.
+
+#### `comment_sections` 옵션
 - `"review_basis"` — 집중 항목과 검토 제외 항목 요약
 - `"praise"` — 잘 작성된 코드·패턴 언급 (없으면 섹션 생략)
 - `"issues"` — 발견된 이슈 목록 (없으면 LGTM 메시지로 대체)

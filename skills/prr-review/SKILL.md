@@ -64,7 +64,8 @@ bash $PRR_DIR/scripts/delete_prr_comments.sh <REPO> <PR_NUMBER>
 각 enabled 리뷰어 JSON에서 읽는 필드:
 - `comment_header` — 코멘트 제목 (예: "🌱 Junior Reviewer")
 - `persona` — 리뷰어의 역할/관점
-- `focus` — 중점 검토 항목 목록
+- `focus` — 중점 검토 카테고리 목록
+- `rules` — 명시적으로 체크할 코드 규칙 목록 (없으면 생략)
 - `ignore` — 검토 제외 항목 목록
 - `severity_threshold` — 보고 최소 심각도 (`low` | `medium` | `high`)
 - `lgtm_comment` — LGTM 시 코멘트 게시 여부 (boolean)
@@ -79,6 +80,27 @@ bash $PRR_DIR/scripts/delete_prr_comments.sh <REPO> <PR_NUMBER>
 - 코드의 정확성, 보안, 안정성, 유지보수성을 우선 검토한다
 - 근거 없는 단정 표현을 피한다. 증거가 약하면 추측임을 밝힌다
 - `tone` 에 명시된 말투·태도로 일관되게 작성한다
+
+**`rules` 체크 (rules 필드가 있는 경우):**
+
+`rules` 의 각 항목을 diff에 명시적으로 대입해 위반 여부를 판단한다.
+
+- 문자열 규칙: 규칙을 위반한 코드가 diff에 추가됐는지 확인한다
+- 객체 규칙: `rule` 로 위반 여부를 판단하고, `reason`·`example` 은 코멘트 작성에 활용한다
+
+rules 위반이 발견되면 일반 이슈와 동일하게 인라인 코멘트로 게시한다.
+코멘트 본문에 어떤 규칙을 위반했는지 명시한다:
+
+```markdown
+> **심각도:** medium
+> **규칙 위반:** async 함수는 반드시 try-catch로 감싼다
+
+이 함수는 await 호출 시 발생하는 예외를 처리하지 않습니다. ...
+
+<!-- PRR-INLINE -->
+```
+
+diff에 해당 패턴이 없으면 (규칙을 지킨 경우) 코멘트를 게시하지 않는다.
 
 **이슈 식별 시 반드시 기록할 정보:**
 각 이슈마다 아래 정보를 함께 추출한다. Step 6에서 인라인 코멘트 게시에 사용한다.
