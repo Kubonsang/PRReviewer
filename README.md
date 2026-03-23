@@ -80,7 +80,16 @@ AI recommends reviewers tailored to your project's tech stack:
 /prr-review 42
 ```
 
-### 4. Follow Up (optional)
+### 4. Improve Reviewers (optional)
+
+Analyzes existing reviewers and suggests improvements — more specific rules, better focus items, missing conventions:
+
+```
+/prr-improve-reviewer
+/prr-improve-reviewer security   ← specific reviewer
+```
+
+### 5. Follow Up (optional)
 
 After a fix commit is pushed, posts reply comments on resolved issues:
 
