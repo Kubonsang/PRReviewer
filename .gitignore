@@ -6,4 +6,5 @@ configs/repos/*/
 *.log
 .claude
 .DS_Store
+AGENTS.md
 
