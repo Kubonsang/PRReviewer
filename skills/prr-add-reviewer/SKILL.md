@@ -1,29 +1,27 @@
 ---
 name: prr-add-reviewer
-description: PRR 리뷰어 추가 스킬. 사용자가 /prr-add-reviewer <owner/repo>를 실행할 때 동작한다. 프로젝트 env.json을 읽어 맞춤형 리뷰어 후보를 추천하고, 사용자가 선택하면 페르소나·집중 항목·무시 항목을 자동 구성해 reviewer JSON을 생성·저장한다. prr-add-reviewer 또는 PRR 리뷰어 추가 요청이 있을 때 반드시 이 스킬을 사용한다.
+description: PRR 리뷰어 추가 스킬. 사용자가 /prr-add-reviewer를 실행할 때 동작한다. 현재 디렉터리의 .prr/env.json을 읽어 맞춤형 리뷰어 후보를 추천하고, 사용자가 선택하면 페르소나·집중 항목·무시 항목을 자동 구성해 reviewer JSON을 생성·저장한다. prr-add-reviewer 또는 PRR 리뷰어 추가 요청이 있을 때 반드시 이 스킬을 사용한다.
 ---
 
 # PRR — 리뷰어 추가
 
 ## 트리거
-사용자가 `/prr-add-reviewer <owner/repo>` 를 실행할 때 동작한다.
-예: `/prr-add-reviewer myorg/backend`
+사용자가 `/prr-add-reviewer` 를 실행할 때 동작한다.
+**현재 디렉터리**가 리뷰 대상 프로젝트 루트여야 한다.
 
 ## PRR 설정 경로
 PRR_DIR 은 사용자가 PRR을 클론한 경로다. 아래 명령으로 확인할 수 있다:
 ```bash
-which prr | xargs dirname   # prr이 PATH에 등록된 경우
+which prr | xargs dirname
 ```
 
 ## 실행 절차
 
-### Step 1 — 인수 파싱
+### Step 1 — 설정 경로 확인
 
-- REPO = 첫 번째 인수 (형식: `owner/repo`)
-- REPO_SLUG = REPO에서 `/`를 `__`로 치환 (예: `owner__repo`)
-- CONFIG_DIR = `$PRR_DIR/configs/repos/$REPO_SLUG`
+- CONFIG_DIR = `$(pwd)/.prr`
 
-CONFIG_DIR 이 없으면: "오류: 등록되지 않은 리포입니다. `prr init <owner/repo>` 를 먼저 실행하세요." 출력 후 종료.
+`$CONFIG_DIR/env.json` 이 없으면: "오류: 등록되지 않은 리포입니다. `/prr-scan` 을 먼저 실행하세요." 출력 후 종료.
 
 ### Step 2 — 컨텍스트 파악
 
@@ -89,7 +87,7 @@ CONFIG_DIR 이 없으면: "오류: 등록되지 않은 리포입니다. `prr ini
 
 ```
 PR 리뷰를 실행하려면:
-  /prr-review {REPO} <pr-number>
+  /prr-review <pr-number>
 
 리뷰어를 직접 수정하려면:
   {저장된 파일 경로}

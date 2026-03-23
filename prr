@@ -70,8 +70,6 @@ case "$COMMAND" in
       echo "✗ 설치되지 않음"
     fi
     echo ""
-    REPO_COUNT=$(find "$PRR_DIR/configs/repos" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')
-    echo "등록된 리포: ${REPO_COUNT}개"
     echo "PRR 경로:    $PRR_DIR"
     ;;
 

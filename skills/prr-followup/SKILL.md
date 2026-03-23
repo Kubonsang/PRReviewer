@@ -1,13 +1,14 @@
 ---
 name: prr-followup
-description: PRR 팔로업 리뷰어. 사용자가 /prr-followup <owner/repo> <pr-number>를 실행할 때 동작한다. 이전 PRR 인라인 코멘트에서 지적한 이슈가 새 커밋에서 수정됐는지 확인하고, 수정이 확인된 코멘트에 답글을 자동으로 게시한다. prr-followup 또는 PR 리뷰 팔로업, 수정 확인 관련 요청이 있을 때 반드시 이 스킬을 사용한다.
+description: PRR 팔로업 리뷰어. 사용자가 /prr-followup <pr-number>를 실행할 때 동작한다. 이전 PRR 인라인 코멘트에서 지적한 이슈가 새 커밋에서 수정됐는지 확인하고, 수정이 확인된 코멘트에 답글을 자동으로 게시한다. prr-followup 또는 PR 리뷰 팔로업, 수정 확인 관련 요청이 있을 때 반드시 이 스킬을 사용한다.
 ---
 
 # PRR — 팔로업 리뷰어
 
 ## 트리거
-사용자가 `/prr-followup <owner/repo> <pr-number>` 를 실행할 때 동작한다.
-예: `/prr-followup myorg/backend 42`
+사용자가 `/prr-followup <pr-number>` 를 실행할 때 동작한다.
+예: `/prr-followup 42`
+**현재 디렉터리**가 리뷰 대상 프로젝트 루트여야 한다.
 
 PR 작성자가 리뷰 코멘트를 반영한 커밋을 올린 뒤 실행한다.
 
@@ -19,13 +20,19 @@ which prr | xargs dirname
 
 ## 실행 절차
 
-### Step 1 — 인수 파싱
-- REPO = 첫 번째 인수 (형식: `owner/repo`)
-- PR_NUMBER = 두 번째 인수 (숫자)
-- REPO_SLUG = REPO에서 `/`를 `__`로 치환
-- CONFIG_DIR = `$PRR_DIR/configs/repos/$REPO_SLUG`
+### Step 1 — 인수 파싱 및 리포 감지
 
-`$CONFIG_DIR/env.json` 이 없으면: "오류: 등록된 리포가 아닙니다." 출력 후 종료.
+- PR_NUMBER = 첫 번째 인수 (숫자)
+- CONFIG_DIR = `$(pwd)/.prr`
+
+현재 디렉터리에서 GitHub 리포를 감지한다:
+```bash
+REPO=$(gh repo view --json nameWithOwner --jq '.nameWithOwner' 2>/dev/null)
+```
+
+REPO가 비어있으면: "오류: GitHub 리포를 감지할 수 없습니다." 출력 후 종료.
+
+`$CONFIG_DIR/env.json` 이 없으면: "오류: .prr/env.json 이 없습니다. `/prr-scan` 을 먼저 실행하세요." 출력 후 종료.
 
 ### Step 2 — 기존 PRR 인라인 코멘트 수집
 

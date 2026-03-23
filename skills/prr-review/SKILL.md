@@ -1,40 +1,46 @@
 ---
 name: prr-review
-description: PRR PR 코드 리뷰어. 사용자가 /prr-review <owner/repo> <pr-number>를 실행할 때 동작한다. 설정된 리뷰어 페르소나별로 GitHub PR diff를 분석하고, 각 리뷰어 이름으로 GitHub 코멘트를 자동 게시한다. prr-review 또는 PR 리뷰 자동화 관련 요청이 있을 때 반드시 이 스킬을 사용한다.
+description: PRR PR 코드 리뷰어. 사용자가 /prr-review <pr-number>를 실행할 때 동작한다. 현재 디렉터리의 .prr/ 설정을 읽어 리뷰어 페르소나별로 GitHub PR diff를 분석하고, 각 리뷰어 이름으로 GitHub 코멘트를 자동 게시한다. prr-review 또는 PR 리뷰 자동화 관련 요청이 있을 때 반드시 이 스킬을 사용한다.
 ---
 
 # PRR — PR 코드 리뷰어
 
 ## 트리거
-사용자가 `/prr-review <owner/repo> <pr-number>` 를 실행할 때 동작한다.
-예: `/prr-review myorg/backend 42`
+사용자가 `/prr-review <pr-number>` 를 실행할 때 동작한다.
+예: `/prr-review 42`
+**현재 디렉터리**가 리뷰 대상 프로젝트 루트여야 한다.
 
 ## PRR 설정 경로
 PRR_DIR 은 사용자가 PRR을 클론한 경로다. 아래 명령으로 확인할 수 있다:
 ```bash
-which prr | xargs dirname   # prr이 PATH에 등록된 경우
+which prr | xargs dirname
 ```
-또는 `~/.zshrc` 에서 `export PATH` 에 추가한 경로를 사용한다.
 
 ## 실행 절차
 
-### Step 1 — 인수 파싱
-- REPO = 첫 번째 인수 (형식: `owner/repo`)
-- PR_NUMBER = 두 번째 인수 (숫자)
-- REPO_SLUG = REPO에서 `/`를 `__`로 치환 (예: `owner__repo`)
-- CONFIG_DIR = `$PRR_DIR/configs/repos/$REPO_SLUG`
+### Step 1 — 인수 파싱 및 리포 감지
+
+- PR_NUMBER = 첫 번째 인수 (숫자)
+- CONFIG_DIR = `$(pwd)/.prr`
+
+현재 디렉터리에서 GitHub 리포를 감지한다:
+```bash
+REPO=$(gh repo view --json nameWithOwner --jq '.nameWithOwner' 2>/dev/null)
+```
+
+REPO가 비어있으면: "오류: GitHub 리포를 감지할 수 없습니다." 출력 후 종료.
 
 ### Step 2 — 설정 파일 로드
 
 `$CONFIG_DIR/env.json` 을 읽는다.
-파일이 없으면: "오류: 등록된 리포가 아닙니다. `prr init <owner/repo>` 를 먼저 실행하세요." 출력 후 종료.
+파일이 없으면: "오류: .prr/env.json 이 없습니다. `/prr-scan` 을 먼저 실행하세요." 출력 후 종료.
 
 env.json에서 추출:
 - `review.exclude_paths` → 제외할 파일 패턴 목록
 - `review.on_update` → `"skip"` | `"review"`
 
 `$CONFIG_DIR/reviewers/` 에서 `"enabled": true` 인 JSON 파일 목록을 수집한다.
-리뷰어가 없으면: "등록된 리뷰어가 없습니다. `prr reviewer add <owner/repo>` 를 실행하세요." 출력 후 종료.
+리뷰어가 없으면: "등록된 리뷰어가 없습니다. `/prr-add-reviewer` 를 실행하세요." 출력 후 종료.
 
 ### Step 3 — Diff 수집 및 필터링
 

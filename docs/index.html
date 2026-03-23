@@ -796,28 +796,28 @@
           <div class="step-num">1</div>
           <div>
             <div class="step-title">스캔 &amp; 리포 등록</div>
-            <div class="step-desc">로컬 프로젝트를 분석해 env.json을 생성한다. 설정 디렉터리와 기본 리뷰어도 함께 초기화된다.<br><span class="skill-cmd">/prr-scan ~/projects/my-repo owner/my-repo</span></div>
+            <div class="step-desc">프로젝트 디렉터리에서 실행. 현재 폴더를 분석해 <code>.prr/env.json</code>을 생성하고 기본 리뷰어도 초기화된다.<br><span class="skill-cmd">/prr-scan</span></div>
           </div>
         </div>
         <div class="step">
           <div class="step-num">2</div>
           <div>
             <div class="step-title">리뷰어 설정</div>
-            <div class="step-desc">AI가 프로젝트에 맞는 리뷰어 후보를 추천한다. 선택하면 페르소나를 자동 구성해 저장한다.<br><span class="skill-cmd">/prr-add-reviewer owner/my-repo</span></div>
+            <div class="step-desc">AI가 프로젝트에 맞는 리뷰어 후보를 추천한다. 선택하면 페르소나를 자동 구성해 저장한다.<br><span class="skill-cmd">/prr-add-reviewer</span></div>
           </div>
         </div>
         <div class="step">
           <div class="step-num">3</div>
           <div>
             <div class="step-title">PR 리뷰 실행</div>
-            <div class="step-desc">이슈는 해당 코드 라인에 인라인 코멘트로, 요약(리뷰 기준·칭찬·마무리)은 별도 PR 코멘트로 게시된다.<br><span class="skill-cmd">/prr-review owner/my-repo 42</span></div>
+            <div class="step-desc">이슈는 해당 코드 라인에 인라인 코멘트로, 요약(리뷰 기준·칭찬·마무리)은 별도 PR 코멘트로 게시된다.<br><span class="skill-cmd">/prr-review 42</span></div>
           </div>
         </div>
         <div class="step">
           <div class="step-num">4</div>
           <div>
             <div class="step-title">팔로업 (선택)</div>
-            <div class="step-desc">수정 커밋 후 실행하면 반영된 이슈에 답글을 자동으로 게시한다.<br><span class="skill-cmd">/prr-followup owner/my-repo 42</span></div>
+            <div class="step-desc">수정 커밋 후 실행하면 반영된 이슈에 답글을 자동으로 게시한다.<br><span class="skill-cmd">/prr-followup 42</span></div>
           </div>
         </div>
       </div>
@@ -892,7 +892,7 @@
       <div class="section-label purple">// Claude Code 스킬</div>
       <h2>/prr-scan</h2>
 
-      <p>로컬 프로젝트를 분석해 <strong>env.json</strong>을 자동 생성한다. 설정 디렉터리가 없으면 생성하고 기본 리뷰어도 함께 초기화한다. <strong>별도의 <code>prr init</code> 없이 이 스킬 하나로 리포 등록이 완료된다.</strong></p>
+      <p>현재 디렉터리의 프로젝트를 분석해 <strong>.prr/env.json</strong>을 자동 생성한다. 설정 디렉터리와 기본 리뷰어도 함께 초기화한다. <strong>리뷰 대상 프로젝트 디렉터리에서 Claude Code를 열고 실행한다.</strong></p>
 
       <div class="skill-block">
         <div class="skill-bar">
@@ -900,7 +900,7 @@
           <button class="cli-copy" onclick="copyBlock(this)">copy</button>
         </div>
         <div class="cli-content">
-          <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-scan <span class="cli-arg">~/projects/my-repo</span> <span class="cli-arg">owner/my-repo</span></span></div>
+          <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-scan</span></div>
         </div>
       </div>
 
@@ -934,12 +934,12 @@
           <button class="cli-copy" onclick="copyBlock(this)">copy</button>
         </div>
         <div class="cli-content">
-          <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-add-reviewer <span class="cli-arg">owner/my-repo</span></span></div>
+          <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-add-reviewer</span></div>
         </div>
       </div>
 
       <div class="flow">
-<span class="flow-skill">/prr-add-reviewer owner/repo</span>
+<span class="flow-skill">/prr-add-reviewer</span>
 │
 ├─ env.json 로드 → 언어·프레임워크·의존성 파악
 ├─ 기존 리뷰어 목록 확인
@@ -969,15 +969,16 @@
           <button class="cli-copy" onclick="copyBlock(this)">copy</button>
         </div>
         <div class="cli-content">
-          <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-review <span class="cli-arg">owner/my-repo</span> <span class="cli-arg">42</span></span></div>
+          <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-review <span class="cli-arg">42</span></span></div>
         </div>
       </div>
 
       <div class="flow">
-<span class="flow-skill">/prr-review owner/repo 42</span>
+<span class="flow-skill">/prr-review 42</span>
 │
-├─ env.json 로드 → exclude_paths, on_update 파악
-├─ <span class="flow-cmd">gh pr diff 42 --repo owner/repo</span>
+├─ gh repo view → REPO 자동 감지
+├─ .prr/env.json 로드 → exclude_paths, on_update 파악
+├─ <span class="flow-cmd">gh pr diff 42 --repo REPO</span>
 │   └─ exclude_paths 패턴 매칭으로 파일 블록 제거
 │
 ├─ on_update="review" 시
@@ -1011,13 +1012,14 @@
           <button class="cli-copy" onclick="copyBlock(this)">copy</button>
         </div>
         <div class="cli-content">
-          <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-followup <span class="cli-arg">owner/my-repo</span> <span class="cli-arg">42</span></span></div>
+          <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-followup <span class="cli-arg">42</span></span></div>
         </div>
       </div>
 
       <div class="flow">
-<span class="flow-skill">/prr-followup owner/repo 42</span>
+<span class="flow-skill">/prr-followup 42</span>
 │
+├─ gh repo view → REPO 자동 감지
 ├─ PR의 모든 review comment 수집
 │   └─ <span class="flow-note">&lt;!-- PRR-INLINE --&gt;</span> 마커로 PRR 코멘트만 필터링
 │
@@ -1061,7 +1063,7 @@
 
       <div class="code-block">
         <div class="code-header">
-          <span class="code-lang">configs/repos/owner__repo/env.json</span>
+          <span class="code-lang">&lt;project-root&gt;/.prr/env.json</span>
           <button class="cli-copy" onclick="copyBlock(this)">copy</button>
         </div>
         <div class="code-body"><span class="kw">{</span>
@@ -1102,7 +1104,7 @@
 
       <div class="code-block">
         <div class="code-header">
-          <span class="code-lang">configs/repos/owner__repo/reviewers/junior.json</span>
+          <span class="code-lang">&lt;project-root&gt;/.prr/reviewers/junior.json</span>
           <button class="cli-copy" onclick="copyBlock(this)">copy</button>
         </div>
         <div class="code-body"><span class="kw">{</span>
@@ -1166,8 +1168,8 @@
       <div class="section-label">// 프로젝트 구조</div>
       <h2>디렉터리</h2>
 
-      <div class="tree"><span class="t-entry">PRR/</span>
-├── <span class="t-file">prr</span>                              <span class="t-note"># CLI (init / skill sync|status / status)</span>
+      <div class="tree"><span class="t-entry">PRR/</span>                              <span class="t-note"># 설치 디렉터리 (한 번만 클론)</span>
+├── <span class="t-file">prr</span>                              <span class="t-note"># CLI (skill sync|status / status)</span>
 │
 ├── <span class="t-dir">scripts/</span>
 │   ├── <span class="t-file">fetch_diff.sh</span>                <span class="t-note"># gh pr diff 래퍼</span>
@@ -1183,20 +1185,21 @@
 │   ├── <span class="t-skill">prr-review/SKILL.md</span>          <span class="t-note"># /prr-review 스킬 정의</span>
 │   └── <span class="t-skill">prr-followup/SKILL.md</span>        <span class="t-note"># /prr-followup 스킬 정의</span>
 │
-├── <span class="t-dir">templates/</span>
-│   └── <span class="t-file">reviewer_default.json</span>    <span class="t-note"># init 시 복사되는 기본 리뷰어</span>
-│
-└── <span class="t-dir">configs/repos/</span>
-    └── <span class="t-dir">{owner}__{repo}/</span>         <span class="t-note"># / → __</span>
-        ├── <span class="t-file">env.json</span>
-        └── <span class="t-dir">reviewers/</span>
-            ├── <span class="t-file">junior.json</span>
-            └── <span class="t-file">senior.json</span>
+└── <span class="t-dir">templates/</span>
+    └── <span class="t-file">reviewer_default.json</span>        <span class="t-note"># 기본 리뷰어 템플릿</span>
 
-<span class="t-skill">~/.claude/skills/</span>               <span class="t-note"># Claude Code 전역 스킬 (cp 로 설치)</span>
+<span class="t-entry">&lt;project-root&gt;/</span>                  <span class="t-note"># 리뷰 대상 프로젝트 (리포별)</span>
+└── <span class="t-dir">.prr/</span>                            <span class="t-note"># /prr-scan 이 생성</span>
+    ├── <span class="t-file">env.json</span>                     <span class="t-note"># 리포 환경 정보</span>
+    └── <span class="t-dir">reviewers/</span>
+        ├── <span class="t-file">junior.json</span>
+        └── <span class="t-file">senior.json</span>
+
+<span class="t-skill">~/.claude/skills/</span>               <span class="t-note"># Claude Code 전역 스킬 (prr skill sync 로 설치)</span>
 ├── <span class="t-skill">prr-review/SKILL.md</span>
 ├── <span class="t-skill">prr-scan/SKILL.md</span>
-└── <span class="t-skill">prr-add-reviewer/SKILL.md</span></div>
+├── <span class="t-skill">prr-add-reviewer/SKILL.md</span>
+└── <span class="t-skill">prr-followup/SKILL.md</span></div>
     </section>
 
     <!-- EDGE CASES -->
@@ -1276,16 +1279,16 @@
         <div class="example-step">
           <div class="example-step-badge">1</div>
           <div class="example-step-body">
-            <div class="example-step-title">리포 등록</div>
-            <div class="example-step-desc">설정 디렉터리와 기본 리뷰어 파일을 생성한다.</div>
-            <div class="cli-block">
-              <div class="cli-bar">
-                <div class="cli-dots"><div class="cli-dot"></div><div class="cli-dot"></div><div class="cli-dot"></div></div>
-                <span class="cli-title">terminal</span>
+            <div class="example-step-title">프로젝트 스캔 &amp; 등록</div>
+            <div class="example-step-desc">myorg/backend 프로젝트 디렉터리에서 Claude Code를 열고 실행한다. <code>.prr/env.json</code>과 기본 리뷰어가 자동 생성된다.</div>
+            <div class="skill-block">
+              <div class="skill-bar">
+                <span class="skill-label">AI 코딩 툴 스킬</span>
               </div>
               <div class="cli-content">
-                <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr init <span class="cli-arg">myorg/backend</span></span></div>
-                <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--green)">✓ configs/repos/myorg__backend/ 생성됨</span></div>
+                <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-scan</span></div>
+                <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--green)">✓ myorg/backend 등록 완료</span></div>
+                <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--muted)">.prr/env.json 저장됨 — 검토 후 필요하면 직접 수정하세요.</span></div>
               </div>
             </div>
           </div>
@@ -1294,22 +1297,6 @@
         <div class="example-step">
           <div class="example-step-badge">2</div>
           <div class="example-step-body">
-            <div class="example-step-title">프로젝트 스캔</div>
-            <div class="example-step-desc">로컬 소스를 분석해 env.json을 자동 생성한다. AI 코딩 툴에서 실행한다.</div>
-            <div class="skill-block">
-              <div class="skill-bar">
-                <span class="skill-label">AI 코딩 툴 스킬</span>
-              </div>
-              <div class="cli-content">
-                <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-scan <span class="cli-arg">~/projects/backend</span> <span class="cli-arg">myorg/backend</span></span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="example-step">
-          <div class="example-step-badge">3</div>
-          <div class="example-step-body">
             <div class="example-step-title">리뷰어 추가</div>
             <div class="example-step-desc">AI가 프로젝트 특성에 맞는 리뷰어 후보를 추천한다. 선택하면 페르소나를 자동 구성해 저장한다.</div>
             <div class="skill-block">
@@ -1317,7 +1304,7 @@
                 <span class="skill-label">AI 코딩 툴 스킬</span>
               </div>
               <div class="cli-content">
-                <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-add-reviewer <span class="cli-arg">myorg/backend</span></span></div>
+                <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-add-reviewer</span></div>
                 <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--muted)">추천 리뷰어: 1) TS 타입 안전성 전문가  2) 보안 리뷰어  3) 주니어 ...</span></div>
                 <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--muted)">선택: 1, 2</span></div>
                 <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--green)">✓ ts-safety.json, security.json 저장됨</span></div>
@@ -1339,7 +1326,7 @@
                 <span class="skill-label">AI 코딩 툴 스킬</span>
               </div>
               <div class="cli-content">
-                <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-review <span class="cli-arg">myorg/backend</span> <span class="cli-arg">42</span></span></div>
+                <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-review <span class="cli-arg">42</span></span></div>
                 <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--muted)">[ts-safety] diff 분석 중...</span></div>
                 <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--green)">✓ 인라인 코멘트 2개 + 요약 코멘트 게시</span></div>
                 <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--muted)">[security] diff 분석 중...</span></div>
@@ -1414,7 +1401,7 @@
                 <span class="skill-label">AI 코딩 툴 스킬</span>
               </div>
               <div class="cli-content">
-                <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-followup <span class="cli-arg">myorg/backend</span> <span class="cli-arg">42</span></span></div>
+                <div class="cli-line"><span class="cli-prompt purple">/</span><span class="cli-cmd">prr-followup <span class="cli-arg">42</span></span></div>
                 <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--muted)">PRR 인라인 코멘트 3건 확인 중...</span></div>
                 <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--green)">✓ src/auth/jwt.ts:38 — 수정 확인 → 답글 게시</span></div>
                 <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd" style="color:var(--muted)">src/auth/login.ts:21 — 변경 없음, 건너뜀</span></div>
