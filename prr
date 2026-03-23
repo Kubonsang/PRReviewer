@@ -25,7 +25,7 @@ case "$COMMAND" in
         mkdir -p "$CLAUDE_SKILLS_DIR"
         synced=0
         for skill_dir in "$PRR_DIR/skills"/*/; do
-          cp -r "$skill_dir" "$CLAUDE_SKILLS_DIR/"
+          cp -r "${skill_dir%/}" "$CLAUDE_SKILLS_DIR/"
           echo "  ✓ $(basename "$skill_dir")"
           synced=$((synced + 1))
         done
