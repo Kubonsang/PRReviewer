@@ -3,192 +3,67 @@ name: prr-review
 description: PRR PR 코드 리뷰어. 사용자가 /prr-review <pr-number>를 실행할 때 동작한다. 현재 디렉터리의 .prr/ 설정을 읽어 리뷰어 페르소나별로 GitHub PR diff를 분석하고, 각 리뷰어 이름으로 GitHub 코멘트를 자동 게시한다. prr-review 또는 PR 리뷰 자동화 관련 요청이 있을 때 반드시 이 스킬을 사용한다.
 ---
 
-# PRR — PR 코드 리뷰어
+## 변수
+- `PR_NUMBER` = 첫 번째 인수
+- `CONFIG_DIR` = `$(pwd)/.prr`
+- `PRR_DIR` = `$(which prr | xargs dirname)`
+- `REPO` = `gh repo view --json nameWithOwner --jq '.nameWithOwner'` — 비어있으면 오류 후 종료
 
-## 트리거
-사용자가 `/prr-review <pr-number>` 를 실행할 때 동작한다.
-예: `/prr-review 42`
-**현재 디렉터리**가 리뷰 대상 프로젝트 루트여야 한다.
+## 설정 로드
+`$CONFIG_DIR/env.json` 없으면 오류 후 종료. `review.exclude_paths`, `review.on_update` 추출.
+`$CONFIG_DIR/reviewers/` 에서 `"enabled": true` 파일 수집. 없으면 오류 후 종료.
 
-## PRR 설정 경로
-PRR_DIR 은 사용자가 PRR을 클론한 경로다. 아래 명령으로 확인할 수 있다:
-```bash
-which prr | xargs dirname
+## Diff 수집
+`gh pr diff <PR_NUMBER> --repo <REPO>` → `diff --git` 단위로 분리 → `exclude_paths`(fnmatch) 필터링 → 비면 종료.
+
+`on_update="review"` 이면: `bash $PRR_DIR/scripts/delete_prr_comments.sh <REPO> <PR_NUMBER>`
+
+## 리뷰어별 리뷰
+
+각 리뷰어 JSON 필드: `comment_header`, `persona`, `focus`, `rules`(선택), `ignore`, `severity_threshold`(low/medium/high), `lgtm_comment`, `tone`, `comment_sections`(기본 `["issues"]`)
+
+**지침:** persona 관점 채택. focus 중심 검토, ignore 제외. severity_threshold 미만 생략. diff에 없는 라인 이슈 보고 금지. 근거 약하면 추측임을 밝힘. tone 말투 유지.
+
+**rules 체크:** 각 규칙(문자열 또는 `{rule, reason?, example?}`)을 diff에 대입해 위반 여부 판단. 위반 시 인라인 코멘트에 규칙명 명시. 위반 없으면 생략.
+
+**이슈 기록:** `path`(파일경로), `line`(새 파일 기준 줄번호, `@@` 헝크에서 계산), `side`(`"RIGHT"` 추가/수정, `"LEFT"` 삭제)
+
+## 코멘트 게시
+
+**인라인 (이슈 1개당):**
 ```
+> **심각도:** low|medium|high
+> **규칙 위반:** {규칙명}  ← rules 위반 시에만
 
-## 실행 절차
-
-### Step 1 — 인수 파싱 및 리포 감지
-
-- PR_NUMBER = 첫 번째 인수 (숫자)
-- CONFIG_DIR = `$(pwd)/.prr`
-
-현재 디렉터리에서 GitHub 리포를 감지한다:
-```bash
-REPO=$(gh repo view --json nameWithOwner --jq '.nameWithOwner' 2>/dev/null)
-```
-
-REPO가 비어있으면: "오류: GitHub 리포를 감지할 수 없습니다." 출력 후 종료.
-
-### Step 2 — 설정 파일 로드
-
-`$CONFIG_DIR/env.json` 을 읽는다.
-파일이 없으면: "오류: .prr/env.json 이 없습니다. `/prr-scan` 을 먼저 실행하세요." 출력 후 종료.
-
-env.json에서 추출:
-- `review.exclude_paths` → 제외할 파일 패턴 목록
-- `review.on_update` → `"skip"` | `"review"`
-
-`$CONFIG_DIR/reviewers/` 에서 `"enabled": true` 인 JSON 파일 목록을 수집한다.
-리뷰어가 없으면: "등록된 리뷰어가 없습니다. `/prr-add-reviewer` 를 실행하세요." 출력 후 종료.
-
-### Step 3 — Diff 수집 및 필터링
-
-```bash
-gh pr diff <PR_NUMBER> --repo <REPO>
-```
-
-가져온 diff를 `diff --git a/<파일>` 단위 블록으로 분리한다.
-`exclude_paths` 패턴(fnmatch 스타일)에 매칭되는 파일 블록을 제거한다.
-필터링 후 diff가 비어있으면: "변경사항 없음 (exclude_paths 필터 적용 후)." 출력 후 종료.
-
-### Step 4 — 이전 PRR 코멘트 삭제
-
-`review.on_update` 가 `"review"` 인 경우에만 실행:
-```bash
-bash $PRR_DIR/scripts/delete_prr_comments.sh <REPO> <PR_NUMBER>
-```
-
-### Step 5 — 리뷰어별 리뷰 수행
-
-각 enabled 리뷰어 JSON에서 읽는 필드:
-- `comment_header` — 코멘트 제목 (예: "🌱 Junior Reviewer")
-- `persona` — 리뷰어의 역할/관점
-- `focus` — 중점 검토 카테고리 목록
-- `rules` — 명시적으로 체크할 코드 규칙 목록 (없으면 생략)
-- `ignore` — 검토 제외 항목 목록
-- `severity_threshold` — 보고 최소 심각도 (`low` | `medium` | `high`)
-- `lgtm_comment` — LGTM 시 코멘트 게시 여부 (boolean)
-- `tone` — 코멘트 말투·태도 (없으면 중립적 서술체 사용)
-- `comment_sections` — 포함할 섹션 순서 목록 (없으면 `["issues"]` 기본값)
-
-**리뷰 수행 지침:**
-- `persona` 에 명시된 역할과 관점을 채택한다
-- `focus` 항목들을 중심으로 diff를 꼼꼼히 검토한다
-- `ignore` 항목들은 검토하지 않는다
-- `severity_threshold` 미만의 이슈는 보고하지 않는다 (low < medium < high)
-- 코드의 정확성, 보안, 안정성, 유지보수성을 우선 검토한다
-- 근거 없는 단정 표현을 피한다. 증거가 약하면 추측임을 밝힌다
-- `tone` 에 명시된 말투·태도로 일관되게 작성한다
-
-**`rules` 체크 (rules 필드가 있는 경우):**
-
-`rules` 의 각 항목을 diff에 명시적으로 대입해 위반 여부를 판단한다.
-
-- 문자열 규칙: 규칙을 위반한 코드가 diff에 추가됐는지 확인한다
-- 객체 규칙: `rule` 로 위반 여부를 판단하고, `reason`·`example` 은 코멘트 작성에 활용한다
-
-rules 위반이 발견되면 일반 이슈와 동일하게 인라인 코멘트로 게시한다.
-코멘트 본문에 어떤 규칙을 위반했는지 명시한다:
-
-```markdown
-> **심각도:** medium
-> **규칙 위반:** async 함수는 반드시 try-catch로 감싼다
-
-이 함수는 await 호출 시 발생하는 예외를 처리하지 않습니다. ...
+{문제 설명과 개선 제안. tone 말투.}
 
 <!-- PRR-INLINE -->
 ```
 
-diff에 해당 패턴이 없으면 (규칙을 지킨 경우) 코멘트를 게시하지 않는다.
+**요약 PR 코멘트** (`comment_sections`에서 `issues` 제외한 섹션):
+- `review_basis`: focus·ignore 요약
+- `praise`: 잘된 코드 언급 (없으면 섹션 생략)
+- `summary`: tone 마무리
 
-**이슈 식별 시 반드시 기록할 정보:**
-각 이슈마다 아래 정보를 함께 추출한다. Step 6에서 인라인 코멘트 게시에 사용한다.
-- `path` — diff에 나타난 파일 경로 (예: `src/auth/login.ts`)
-- `line` — 변경된 코드의 새 파일 기준 줄번호 (추가/수정 라인은 `+` 기호 기준)
-- `side` — 추가·수정 라인은 `"RIGHT"`, 삭제 라인은 `"LEFT"`
-
-라인 번호는 반드시 diff 헝크(`@@ -a,b +c,d @@`)에서 계산한다.
-diff에 나타나지 않은 라인(변경 없는 코드)에서 발견한 이슈는 보고하지 않는다.
-
-**이슈가 없는 경우:**
-- `lgtm_comment: true` → 코멘트 게시 (LGTM 섹션 포함)
-- `lgtm_comment: false` → 코멘트 생략
-
-### Step 6 — 코멘트 게시
-
-이슈는 **인라인 코멘트**로, 나머지 섹션은 **요약 PR 코멘트**로 분리해 게시한다.
-
-#### 6-1. 인라인 코멘트 본문 형식 (이슈 1개당)
-
-```markdown
-> **심각도:** low | medium | high
-
-문제 설명과 개선 제안. `tone`에 맞는 말투로 작성한다.
-
-<!-- PRR-INLINE -->
 ```
-
-`<!-- PRR-INLINE -->` 마커는 반드시 포함한다. `/prr-followup` 스킬이 이 마커로 PRR이 남긴 인라인 코멘트를 식별한다.
-
-#### 6-2. 요약 PR 코멘트 구조
-
-`comment_sections` 에서 `issues`를 제외한 섹션으로 구성한다.
-
-| 섹션 키 | 내용 |
-|---------|------|
-| `review_basis` | 이번 리뷰에서 집중한 항목(`focus`)과 검토 제외 항목(`ignore`)을 간략히 설명 |
-| `praise` | diff에서 잘 작성된 코드, 좋은 패턴, 개선된 부분을 구체적으로 언급. 칭찬할 것이 없으면 섹션 생략 |
-| `summary` | `tone`에 맞는 마무리 한마디 |
-
-```markdown
 ## {comment_header}
 
-{tone에 맞는 첫 인사 한 문장}
-
-### 📋 리뷰 기준
-{review_basis 내용}
-
-### ✨ 잘한 점
-{praise 내용}
-
-### 💬 마무리
-{summary 내용}
+{인사 한 문장}
+### 📋 리뷰 기준 / ### ✨ 잘한 점 / ### 💬 마무리
 
 ---
 🤖 *이 리뷰는 AI가 작성했습니다.*
-
 <!-- PRR-AUTO-REVIEW -->
 ```
 
-이슈가 없고 `lgtm_comment: true` 이면 요약 코멘트에 LGTM 섹션을 추가한다:
-```markdown
-### ✅ LGTM
-특이사항 없음. 코드 잘 작성됐어요! ✓
-```
+이슈 없고 `lgtm_comment: true`면 `### ✅ LGTM` 섹션 추가.
 
-#### 6-3. 게시
-
-리뷰 JSON을 임시 파일에 작성한 뒤 `post_review.sh` 로 게시한다:
-
+**게시:**
 ```bash
 TMPFILE=$(mktemp /tmp/prr_review_XXXXXX.json)
 trap 'rm -f "$TMPFILE"' EXIT
-
-# 아래 구조로 JSON 작성
-# {
-#   "body": "<요약 PR 코멘트 본문>",
-#   "comments": [
-#     { "path": "src/foo.ts", "line": 42, "side": "RIGHT", "body": "<인라인 코멘트 본문>" },
-#     ...
-#   ]
-# }
-
+# { "body": "...", "comments": [{"path":"...","line":N,"side":"RIGHT","body":"..."},...] }
 bash "$PRR_DIR/scripts/post_review.sh" "<REPO>" "<PR_NUMBER>" "$TMPFILE"
 ```
 
-이슈가 없으면 `"comments": []` 로 설정한다.
-
-### Step 7 — 완료
-
-"✓ PR #<PR_NUMBER> 리뷰 완료 (<N>개 리뷰어)" 출력
+완료: `✓ PR #<PR_NUMBER> 리뷰 완료 (<N>개 리뷰어)` 출력
