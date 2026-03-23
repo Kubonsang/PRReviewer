@@ -655,7 +655,6 @@
       <div class="nav-section">
         <div class="nav-label">CLI</div>
         <a class="nav-link" href="#cli">커맨드 목록</a>
-        <a class="nav-link" href="#init">prr init</a>
         <a class="nav-link" href="#skill-cmd">prr skill</a>
       </div>
       <div class="nav-section">
@@ -796,8 +795,8 @@
         <div class="step">
           <div class="step-num">1</div>
           <div>
-            <div class="step-title">리포 등록</div>
-            <div class="step-desc">CLI로 설정 디렉터리를 생성하고 기본 리뷰어를 준비한다.<br><code>prr init owner/my-repo</code></div>
+            <div class="step-title">프로젝트 스캔 &amp; 리포 등록</div>
+            <div class="step-desc">로컬 프로젝트를 스캔해 env.json을 생성한다. 설정 디렉터리와 기본 리뷰어도 함께 초기화된다.<br><span class="skill-cmd">/prr-scan ~/projects/my-repo owner/my-repo</span></div>
           </div>
         </div>
         <div class="step">
@@ -840,40 +839,10 @@
           <button class="cli-copy" onclick="copyBlock(this)">copy</button>
         </div>
         <div class="cli-content">
-          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">init</span> &lt;owner/repo&gt;</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 리포 등록</span></div>
-          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">init</span> &lt;owner/repo&gt;</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 리포 등록</span></div>
           <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">skill</span> sync</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 스킬 동기화</span></div>
           <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">skill</span> status</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 스킬 동기화 상태 확인</span></div>
           <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">status</span></span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 환경 상태 확인</span></div>
         </div>
-      </div>
-    </section>
-
-    <!-- INIT -->
-    <section id="init">
-      <div class="section-label">// prr init</div>
-      <h2>리포 등록</h2>
-
-      <p>설정 디렉터리와 기본 리뷰어 파일을 생성한다. 이후 <span style="color:var(--purple);font-family:'JetBrains Mono',monospace;font-size:13px">/prr-scan</span> 스킬로 env.json을 생성하면 된다.</p>
-
-      <div class="cli-block">
-        <div class="cli-bar">
-          <div class="cli-dots"><div class="cli-dot"></div><div class="cli-dot"></div><div class="cli-dot"></div></div>
-          <span class="cli-title">예시</span>
-          <button class="cli-copy" onclick="copyBlock(this)">copy</button>
-        </div>
-        <div class="cli-content">
-          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr init <span class="cli-arg">owner/my-repo</span></span></div>
-        </div>
-      </div>
-
-      <div class="flow">
-<span class="flow-cmd">prr init owner/repo</span>
-├─ configs/repos/owner__repo/ 생성
-├─ reviewers/junior.json      <span class="flow-note">→ 기본 리뷰어 템플릿 복사</span>
-└─ <span class="flow-ok">다음 단계 안내 출력</span>
-   ├─ <span class="flow-skill">/prr-scan</span> &lt;local-path&gt; owner/repo     <span class="flow-note">→ env.json 생성</span>
-   └─ <span class="flow-skill">/prr-add-reviewer</span> owner/repo         <span class="flow-note">→ 리뷰어 추가</span>
       </div>
     </section>
 
@@ -923,7 +892,7 @@
       <div class="section-label purple">// Claude Code 스킬</div>
       <h2>/prr-scan</h2>
 
-      <p>로컬 프로젝트를 분석해 <strong>env.json</strong>을 자동 생성한다. Claude Code가 직접 파일을 읽고 프로젝트 특성을 파악해 JSON을 출력한다.</p>
+      <p>로컬 프로젝트를 분석해 <strong>env.json</strong>을 자동 생성한다. 설정 디렉터리가 없으면 생성하고 기본 리뷰어도 함께 초기화한다. <strong>별도의 <code>prr init</code> 없이 이 스킬 하나로 리포 등록이 완료된다.</strong></p>
 
       <div class="skill-block">
         <div class="skill-bar">

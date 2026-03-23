@@ -50,38 +50,23 @@ prr status
 
 ## 사용법
 
-### 1. 리포 등록
+### 1. 리포 등록 + 프로젝트 스캔
 
-```bash
-prr init owner/my-repo
-```
-
-### 2. 프로젝트 스캔 (env.json 자동 생성)
-
-Claude Code에서 실행:
+AI 코딩 툴에서 실행. 설정 디렉터리 생성, env.json 자동 생성이 한 번에 이루어진다:
 
 ```
 /prr-scan ~/projects/my-repo owner/my-repo
 ```
 
-### 3. 리뷰어 설정 (선택)
+### 2. 리뷰어 설정
 
-Claude Code에서 실행 (AI가 프로젝트에 맞는 리뷰어를 추천):
+AI가 프로젝트에 맞는 리뷰어를 추천한다:
 
 ```
 /prr-add-reviewer owner/my-repo
 ```
 
-또는 CLI로 직접 추가:
-
-```bash
-prr reviewer add owner/my-repo   # 템플릿 복사 후 에디터로 편집
-prr reviewer list owner/my-repo  # 목록 확인
-```
-
-### 4. PR 리뷰
-
-Claude Code에서 실행:
+### 3. PR 리뷰
 
 ```
 /prr-review owner/my-repo 42
@@ -93,7 +78,6 @@ Claude Code에서 실행:
 
 | 커맨드 | 설명 |
 |--------|------|
-| `prr init <owner/repo>` | 리포 등록 (설정 디렉터리 생성) |
 | `prr skill sync` | 스킬 동기화 (git pull 후 실행) |
 | `prr skill status` | 스킬 동기화 상태 확인 |
 | `prr status` | 환경 상태 확인 (gh, python3) |

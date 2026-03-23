@@ -67,10 +67,22 @@ LOCAL_PATH 에서 아래 파일들을 읽어 프로젝트 특성을 파악한다
 }
 ```
 
-### Step 4 — 저장
+### Step 4 — 저장 및 초기화
 
-CONFIG_DIR 가 없으면 생성한다.
+```bash
+mkdir -p "$CONFIG_DIR/reviewers"
+```
+
 `$CONFIG_DIR/env.json` 에 저장한다 (들여쓰기 2칸).
 
+`$CONFIG_DIR/reviewers/` 가 비어있으면 기본 리뷰어 템플릿을 복사한다:
+```bash
+cp "$PRR_DIR/templates/reviewer_default.json" "$CONFIG_DIR/reviewers/junior.json"
+```
+
 저장 후 파일 내용을 출력하고:
-"env.json 이 저장되었습니다. 검토 후 필요하면 직접 수정하세요." 출력
+```
+✓ <owner/repo> 등록 완료
+  env.json 저장됨 — 검토 후 필요하면 직접 수정하세요.
+  기본 리뷰어(junior) 생성됨 — /prr-add-reviewer <owner/repo> 로 리뷰어를 추가하세요.
+```
