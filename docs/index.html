@@ -656,7 +656,6 @@
         <div class="nav-label">CLI</div>
         <a class="nav-link" href="#cli">커맨드 목록</a>
         <a class="nav-link" href="#init">prr init</a>
-        <a class="nav-link" href="#reviewer">prr reviewer</a>
         <a class="nav-link" href="#skill-cmd">prr skill</a>
       </div>
       <div class="nav-section">
@@ -842,9 +841,7 @@
         </div>
         <div class="cli-content">
           <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">init</span> &lt;owner/repo&gt;</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 리포 등록</span></div>
-          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">reviewer</span> add &lt;owner/repo&gt;</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 리뷰어 추가</span></div>
-          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">reviewer</span> list &lt;owner/repo&gt;</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;# 리뷰어 목록</span></div>
-          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">repo</span> list</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 등록된 리포 목록</span></div>
+          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">init</span> &lt;owner/repo&gt;</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 리포 등록</span></div>
           <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">skill</span> sync</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 스킬 동기화</span></div>
           <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">skill</span> status</span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 스킬 동기화 상태 확인</span></div>
           <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr <span class="cli-arg">status</span></span><span class="cli-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 환경 상태 확인</span></div>
@@ -875,42 +872,8 @@
 ├─ configs/repos/owner__repo/ 생성
 ├─ reviewers/junior.json      <span class="flow-note">→ 기본 리뷰어 템플릿 복사</span>
 └─ <span class="flow-ok">다음 단계 안내 출력</span>
-   ├─ <span class="flow-skill">/prr-scan</span> &lt;local-path&gt; owner/repo  <span class="flow-note">→ env.json 생성</span>
-   └─ prr reviewer add owner/repo      <span class="flow-note">→ 리뷰어 추가</span>
-      </div>
-    </section>
-
-    <!-- REVIEWER -->
-    <section id="reviewer">
-      <div class="section-label">// prr reviewer</div>
-      <h2>리뷰어 관리</h2>
-
-      <p>한 리포에 여러 리뷰어를 설정할 수 있다. 각 리뷰어는 독립적인 페르소나로 별도의 GitHub 코멘트를 게시한다.</p>
-
-      <div class="cli-block">
-        <div class="cli-bar">
-          <div class="cli-dots"><div class="cli-dot"></div><div class="cli-dot"></div><div class="cli-dot"></div></div>
-          <span class="cli-title">인터랙티브</span>
-          <button class="cli-copy" onclick="copyBlock(this)">copy</button>
-        </div>
-        <div class="cli-content">
-          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr reviewer add <span class="cli-arg">owner/my-repo</span></span></div>
-          <div class="cli-line"><span class="cli-prompt">&gt;</span><span class="cli-cmd">리뷰어 ID: <span class="cli-arg">senior</span></span></div>
-          <div class="cli-line"><span class="cli-prompt">&gt;</span><span class="cli-cmd">에디터로 열까요? <span class="cli-arg">[Y/n]</span></span></div>
-        </div>
-      </div>
-
-      <div class="cli-block">
-        <div class="cli-bar">
-          <div class="cli-dots"><div class="cli-dot"></div><div class="cli-dot"></div><div class="cli-dot"></div></div>
-          <span class="cli-title">목록 확인</span>
-          <button class="cli-copy" onclick="copyBlock(this)">copy</button>
-        </div>
-        <div class="cli-content">
-          <div class="cli-line"><span class="cli-prompt">$</span><span class="cli-cmd">prr reviewer list <span class="cli-arg">owner/my-repo</span></span></div>
-          <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd"><span class="cli-arg">✓</span> junior   <span style="color:var(--green)">enabled</span></span></div>
-          <div class="cli-line"><span class="cli-prompt"></span><span class="cli-cmd"><span class="cli-arg">✓</span> senior   <span style="color:var(--green)">enabled</span></span></div>
-        </div>
+   ├─ <span class="flow-skill">/prr-scan</span> &lt;local-path&gt; owner/repo     <span class="flow-note">→ env.json 생성</span>
+   └─ <span class="flow-skill">/prr-add-reviewer</span> owner/repo         <span class="flow-note">→ 리뷰어 추가</span>
       </div>
     </section>
 
@@ -1235,25 +1198,21 @@
       <h2>디렉터리</h2>
 
       <div class="tree"><span class="t-entry">PRR/</span>
-├── <span class="t-file">prr</span>                          <span class="t-note"># CLI 진입점</span>
-│
-├── <span class="t-dir">commands/</span>
-│   ├── <span class="t-file">init.sh</span>                  <span class="t-note"># prr init</span>
-│   ├── <span class="t-file">reviewer.sh</span>              <span class="t-note"># prr reviewer add/list</span>
-│   ├── <span class="t-file">repo.sh</span>                  <span class="t-note"># prr repo list</span>
-│   └── <span class="t-file">status.sh</span>                <span class="t-note"># prr status</span>
+├── <span class="t-file">prr</span>                              <span class="t-note"># CLI (init / skill sync|status / status)</span>
 │
 ├── <span class="t-dir">scripts/</span>
-│   ├── <span class="t-file">fetch_diff.sh</span>            <span class="t-note"># gh pr diff 래퍼</span>
-│   ├── <span class="t-file">filter_diff.py</span>           <span class="t-note"># exclude_paths 필터</span>
-│   ├── <span class="t-file">post_comment.sh</span>          <span class="t-note"># PRR 마커 코멘트 게시</span>
-│   ├── <span class="t-file">delete_prr_comments.sh</span>   <span class="t-note"># 이전 PRR 코멘트 삭제</span>
-│   └── <span class="t-file">notify.sh</span>                <span class="t-note"># macOS 알림</span>
+│   ├── <span class="t-file">fetch_diff.sh</span>                <span class="t-note"># gh pr diff 래퍼</span>
+│   ├── <span class="t-file">filter_diff.py</span>               <span class="t-note"># exclude_paths 필터</span>
+│   ├── <span class="t-file">post_review.sh</span>               <span class="t-note"># GitHub Reviews API 게시 (인라인 + 요약)</span>
+│   ├── <span class="t-file">post_reply.sh</span>                <span class="t-note"># 인라인 코멘트 답글 게시</span>
+│   ├── <span class="t-file">delete_prr_comments.sh</span>       <span class="t-note"># 이전 PRR 코멘트 삭제</span>
+│   └── <span class="t-file">notify.sh</span>                    <span class="t-note"># macOS 알림</span>
 │
-├── <span class="t-skill">skills/</span>                      <span class="t-note"># Claude Code 스킬 소스 (배포용)</span>
-│   ├── <span class="t-skill">prr-review/SKILL.md</span>      <span class="t-note"># /prr-review 스킬 정의</span>
-│   ├── <span class="t-skill">prr-scan/SKILL.md</span>        <span class="t-note"># /prr-scan 스킬 정의</span>
-│   └── <span class="t-skill">prr-add-reviewer/SKILL.md</span> <span class="t-note"># /prr-add-reviewer 스킬 정의</span>
+├── <span class="t-skill">skills/</span>                          <span class="t-note"># AI 코딩 툴 스킬 소스 (배포용)</span>
+│   ├── <span class="t-skill">prr-scan/SKILL.md</span>            <span class="t-note"># /prr-scan 스킬 정의</span>
+│   ├── <span class="t-skill">prr-add-reviewer/SKILL.md</span>    <span class="t-note"># /prr-add-reviewer 스킬 정의</span>
+│   ├── <span class="t-skill">prr-review/SKILL.md</span>          <span class="t-note"># /prr-review 스킬 정의</span>
+│   └── <span class="t-skill">prr-followup/SKILL.md</span>        <span class="t-note"># /prr-followup 스킬 정의</span>
 │
 ├── <span class="t-dir">templates/</span>
 │   └── <span class="t-file">reviewer_default.json</span>    <span class="t-note"># init 시 복사되는 기본 리뷰어</span>

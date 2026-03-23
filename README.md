@@ -93,13 +93,10 @@ Claude Code에서 실행:
 
 | 커맨드 | 설명 |
 |--------|------|
-| `prr init <owner/repo>` | 리포 등록 |
-| `prr reviewer add <owner/repo>` | 리뷰어 추가 |
-| `prr reviewer list <owner/repo>` | 리뷰어 목록 |
-| `prr repo list` | 등록된 리포 목록 |
+| `prr init <owner/repo>` | 리포 등록 (설정 디렉터리 생성) |
 | `prr skill sync` | 스킬 동기화 (git pull 후 실행) |
 | `prr skill status` | 스킬 동기화 상태 확인 |
-| `prr status` | 환경 상태 확인 |
+| `prr status` | 환경 상태 확인 (gh, python3) |
 
 ---
 
