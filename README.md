@@ -7,13 +7,14 @@ Claude Code 스킬로 동작하며, 유료 API 없이 ToS를 완전히 준수한
 
 ## 개요
 
-- **AI 엔진**: Claude Code 스킬 (`/prr-review`, `/prr-scan`)
-- **설정 관리**: `prr` CLI
+- **AI 엔진**: AI 코딩 툴 스킬 (`/prr-scan`, `/prr-add-reviewer`, `/prr-review`, `/prr-followup`)
+- **스킬 관리**: `prr` CLI (`skill sync`, `status`)
 - **PR 연동**: `gh` CLI
-- **비용**: 0원 (Claude Code 구독 범위 내)
-- **ToS**: 사람이 직접 트리거 → Consumer ToS 완전 준수
+- **비용**: 0원 (AI 코딩 툴 구독 범위 내)
+- **ToS**: 사람이 직접 트리거 → Anthropic·GitHub ToS 완전 준수
 
 리뷰어 페르소나를 JSON으로 정의하면 각자 별도의 GitHub 코멘트를 게시한다.
+이슈는 해당 코드 라인에 인라인 코멘트로, 요약은 PR 코멘트로 분리해 게시한다.
 한 리포에 주니어/시니어 등 여러 리뷰어를 설정할 수 있다.
 
 ---
@@ -70,6 +71,14 @@ AI가 프로젝트에 맞는 리뷰어를 추천한다:
 
 ```
 /prr-review owner/my-repo 42
+```
+
+### 4. 팔로업 (선택)
+
+수정 커밋 후 실행하면 반영된 이슈에 답글을 자동으로 게시한다:
+
+```
+/prr-followup owner/my-repo 42
 ```
 
 ---
